@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Portfolio</title></head>
+<body>
+<h1 th:text="${portfolio.name}">Portfolio</h1>
+<p th:text="${portfolio.description}">desc</p>
+
+<h2>Debts</h2>
+<table>
+    <thead><tr><th>Name</th><th>Debtor</th><th>Remaining</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+    <tr th:each="d : ${debts}">
+        <td th:text="${d.name}">Debt</td>
+        <td th:text="${d.debtor.name}">Debtor</td>
+        <td th:text="${d.remainingBalance}">0.00</td>
+        <td th:text="${d.status}">OPEN</td>
+        <td>
+            <form th:action="@{/api/debt/{id}/payment(id=${d.id})}" method="post">
+                <input name="amount" placeholder="Amount">
+                <input name="method" placeholder="Method">
+                <button type="submit">Add Payment</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
