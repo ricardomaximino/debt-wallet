@@ -141,3 +141,42 @@ body {
   opacity: 0.3;
   margin-bottom: 1rem;
 }
+
+.debtor-results-container {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.debtor-result-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.debtor-result-item:last-child {
+  border-bottom: none;
+}
+
+.debtor-result-item:hover {
+  background: var(--gray-50);
+}
+
+.debtor-result-item.selected {
+  background: var(--primary);
+  color: white;
+}
+
+.debtor-result-item.selected .text-muted {
+  color: rgba(255,255,255,0.8) !important;
+}
+
+.search-spinner {
+  position: absolute;
+  right: 10px;
+  top: 38px;
+}
