@@ -2,6 +2,7 @@ package es.brasatech.debit_wallet.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record Debt(
@@ -14,5 +15,6 @@ public record Debt(
     LocalDateTime createdAt,
     DebtStatus status,
     PaymentType paymentType,
-    BigDecimal remainingBalance
+    BigDecimal remainingBalance,
+    List<Operation> operations
 ) {}
