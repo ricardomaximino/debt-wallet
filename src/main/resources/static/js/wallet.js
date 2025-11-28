@@ -86,7 +86,10 @@ class DebtWalletApp {
     this.currentDebt = null;
     this.searchTimeout = null;
     this.selectedDebtor = null;
-    this.loadData();
+  }
+
+  async init() {
+    await this.loadData();
     this.render();
     this.initializeEventListeners();
   }
@@ -255,22 +258,40 @@ class DebtWalletApp {
     localStorage.setItem('debtWalletData', JSON.stringify(this.wallets));
   }
 
-  loadData() {
-    const data = localStorage.getItem('debtWalletData');
-    if (data) {
-      const parsed = JSON.parse(data);
-      this.wallets = parsed.map(w => Object.assign(new Wallet(), w));
-      this.wallets.forEach(wallet => {
-        wallet.debts = wallet.debts.map(d => Object.assign(new Debt(), d));
-        wallet.debts.forEach(debt => {
-          debt.payments = debt.payments.map(p => Object.assign(new Payment(), p));
-        });
+  async loadData() {
+    try {
+      const response = await fetch('http://localhost:8082/api/wallet', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+        }
       });
-    } else {
-      // Initialize with sample data
+
+      const data = await response.json();
+
+      if (data && Array.isArray(data)) {
+        // Optional: use parsed localStorage if needed
+        const data1 = localStorage.getItem('debtWalletData');
+        const parsed = data1 ? JSON.parse(data1) : null;
+
+        this.wallets = data.map(w => Object.assign(new Wallet(), w));
+        this.wallets.forEach(wallet => {
+          wallet.debts = wallet.debts.map(d => Object.assign(new Debt(), d));
+          wallet.debts.forEach(debt => {
+            debt.payments = debt.payments.map(p => Object.assign(new Payment(), p));
+          });
+        });
+      } else {
+        // Initialize with sample data
+        this.initializeSampleData();
+      }
+    } catch (error) {
+      console.error("Failed to load data:", error);
       this.initializeSampleData();
     }
   }
+
 
   initializeSampleData() {
     const wallet1 = new Wallet('Freelance Clients');
@@ -315,17 +336,34 @@ class DebtWalletApp {
   }
 
   // CRUD Operations
-  createWallet() {
+  async createWallet() {
     const name = document.getElementById('walletName').value;
     if (!name) return;
+      try {
+        const response = await fetch('http://localhost:8082/api/wallet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+        },
+        body: JSON.stringify({ value: name })
+        });
 
-    const wallet = new Wallet(name);
-    this.wallets.push(wallet);
-    this.saveData();
+        const data = await response.json();
+        const wallet = new Wallet();
+        wallet.id = data.id;
+        wallet.name = data.name;
+        wallet.createdAt = data.createdAt;
+        this.wallets.push(wallet);
+        await this.loadData();
+        bootstrap.Modal.getInstance(document.getElementById('walletModal')).hide();
+        document.getElementById('walletForm').reset();
+        this.render();
 
-    bootstrap.Modal.getInstance(document.getElementById('walletModal')).hide();
-    document.getElementById('walletForm').reset();
-    this.render();
+      }
+      catch(error) {
+        console.error('Create wallet failed:', error);
+      }
   }
 
   createDebt() {
@@ -639,3 +677,4 @@ class DebtWalletApp {
 
 // Initialize the application
 const app = new DebtWalletApp();
+app.init();

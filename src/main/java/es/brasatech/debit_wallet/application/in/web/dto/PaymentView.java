@@ -6,7 +6,14 @@ import java.util.UUID;
 
 public record PaymentView(
         UUID id,
+        UUID debitId,
         BigDecimal amount,
         LocalDateTime date,
-        String type
-) {}
+        String type,
+        LocalDateTime createdAt
+) {
+
+    public PaymentView(UUID id, UUID debitId, BigDecimal amount, LocalDateTime date, String type){
+        this(id, debitId, amount, date, type, LocalDateTime.now());
+    }
+}
