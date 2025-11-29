@@ -11,16 +11,12 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "debtor")
-public class DebtorEntity {
+@Table(name = "wallet")
+public class WalletEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String name;
-    private String phone;
-    private String email;
-    @Column(columnDefinition = "text")
-    private String notes;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+    UUID userId;
 }
-

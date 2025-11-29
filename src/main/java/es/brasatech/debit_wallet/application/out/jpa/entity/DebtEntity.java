@@ -13,23 +13,25 @@ import java.util.UUID;
 @Entity
 @Table(name = "debt")
 public class DebtEntity {
-    @Id @GeneratedValue private UUID id;
+    @Id @GeneratedValue
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "portfolio_id", nullable = false)
-    private PortfolioEntity portfolio;
+    private UUID userId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "debtor_id", nullable = false)
-    private DebtorEntity debtor;
+    private UUID portfolioId;
+
+    private UUID debtorId;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
     private ItemEntity item;
 
     private String name;
-    @Column(columnDefinition = "text") private String note;
-    private BigDecimal value;
+
+    private String note;
+
+    private BigDecimal amount;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -37,8 +39,4 @@ public class DebtEntity {
 
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType = PaymentType.FLEXIBLE;
-
-    private BigDecimal remainingBalance;
-
-    // getters/setters
 }

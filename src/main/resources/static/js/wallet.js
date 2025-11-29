@@ -366,34 +366,70 @@ class DebtWalletApp {
       }
   }
 
-  createDebt() {
+  async createDebt() {
     const name = document.getElementById('debtName').value;
     const description = document.getElementById('debtDescription').value;
     const email = document.getElementById('debtEmail').value;
     const value = document.getElementById('debtValue').value;
     const paymentType = document.getElementById('debtPaymentType').value;
-    const debtorId = document.getElementById('selectedDebtorId').value;
+    let debtorId = document.getElementById('selectedDebtorId').value;
 
     if (!name || !value) return;
 
-    // If no debtor was selected, this will create a new debtor on backend
-    const finalDebtorId = debtorId || null;
+    if (!debtorId) {
+      try {
+        const response = await fetch('http://localhost:8082/api/debtor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            })
+        });
 
-    console.log('Creating debt - Backend will handle:', {
-      debtorId: finalDebtorId,
-      debtorData: finalDebtorId ? 'Existing debtor' : { name, email },
-      debtInfo: { description, value, paymentType }
-    });
+        const data = await response.json();
+        debtorId = data.id;
+      } catch(error) {
+        console.error('Create debtor failed:', error);
+      }
+    }
 
-    const debt = new Debt(
+    let debt = new Debt(
       this.currentWallet.id,
-      finalDebtorId,
+      debtorId,
       name,
       description,
       email,
       value,
       paymentType
     );
+
+    try {
+      const response = await fetch('http://localhost:8082/api/debt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+        },
+        body: JSON.stringify(debt)
+      });
+
+      const data = await response.json();
+      debt = new Debt(
+        data.id,
+        data.debtor.id,
+        data.debtor.name,
+        data.description,
+        data.debtor.email,
+        data.value,
+        data.paymentType
+      );
+    } catch(error) {
+      console.error('Create debtor failed:', error);
+    }
 
     this.currentWallet.debts.push(debt);
     this.saveData();

@@ -7,11 +7,12 @@ import java.util.UUID;
 
 public record Debt(
     UUID id,
-    Portfolio portfolio,
-    Debtor debtor,
+    UUID walletId,
+    UUID debtorId,
+    UUID userId,
     Item item,
     String name,
-    BigDecimal value,
+    BigDecimal amount,
     LocalDateTime createdAt,
     DebtStatus status,
     PaymentType paymentType,

@@ -20,8 +20,8 @@ public interface WalletMapperResource {
     PaymentResource mapToPaymentResource(Payment payment);
     Payment mapToPayment(PaymentResource paymentResource);
 
-    PortfolioResource mapToPortfolioResource(Portfolio portfolio);
-    Portfolio mapToPortfolio(PortfolioResource portfolioResource);
+    PortfolioResource mapToPortfolioResource(Wallet wallet);
+    Wallet mapToPortfolio(PortfolioResource portfolioResource);
 
     UserResource mapToUserResource(User user);
     User mapToUser(UserResource userResource);

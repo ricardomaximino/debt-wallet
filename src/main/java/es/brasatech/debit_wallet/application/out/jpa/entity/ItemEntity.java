@@ -1,6 +1,9 @@
 package es.brasatech.debit_wallet.application.out.jpa.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -11,11 +14,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "item")
 public class ItemEntity {
-    @Id @GeneratedValue private UUID id;
+    @Id
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
     private String name;
     @Column(columnDefinition = "text") private String description;
     private LocalDate date;
     private String category;
     private LocalDateTime createdAt = LocalDateTime.now();
-    // getters/setters
+    private UUID itemId;
 }

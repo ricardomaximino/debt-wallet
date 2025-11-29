@@ -1,13 +1,16 @@
 package es.brasatech.debit_wallet.application.in.web.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record DebtorView(
         UUID id,
         String name,
         String surname,
-        String email,
         String phone,
-        String address
+        String email,
+        String notes,
+        String address,
+        LocalDateTime createdAt
 ) {
 }

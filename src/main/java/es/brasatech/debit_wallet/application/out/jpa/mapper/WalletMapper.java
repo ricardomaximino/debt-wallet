@@ -20,8 +20,8 @@ public interface WalletMapper {
     PaymentEntity mapToPaymentEntity(Payment payment);
     Payment mapToPayment(PaymentEntity paymentEntity);
 
-    PortfolioEntity mapToPortfolioEntity(Portfolio portfolio);
-    Portfolio mapToPortfolio(PortfolioEntity portfolioEntity);
+    WalletEntity mapToWalletEntity(Wallet wallet);
+    Wallet mapToWallet(WalletEntity walletEntity);
 
     UserEntity mapToUserEntity(User user);
     User mapToUser(UserEntity userEntity);

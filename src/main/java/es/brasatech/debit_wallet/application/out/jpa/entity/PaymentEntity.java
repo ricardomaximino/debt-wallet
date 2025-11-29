@@ -1,6 +1,9 @@
 package es.brasatech.debit_wallet.application.out.jpa.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,15 +14,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "payment")
 public class PaymentEntity {
-    @Id @GeneratedValue private UUID id;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "debt_id", nullable = false)
-    private DebtEntity debt;
-
+    @Id
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
+    private UUID debtId;
     private BigDecimal amount;
     private LocalDateTime date = LocalDateTime.now();
     private String method;
-    @Column(columnDefinition = "text") private String note;
-    // getters/setters
+    @Column(columnDefinition = "text")
+    private String note;
 }
