@@ -2,7 +2,9 @@ package es.brasatech.debit_wallet.application.in.api;
 
 import es.brasatech.debit_wallet.application.in.mapper.WalletMapperResource;
 import es.brasatech.debit_wallet.application.in.model.WalletNameResource;
+import es.brasatech.debit_wallet.application.in.web.dto.DebtView;
 import es.brasatech.debit_wallet.application.in.web.dto.DebtorView;
+import es.brasatech.debit_wallet.application.in.web.dto.PaymentView;
 import es.brasatech.debit_wallet.application.in.web.dto.WalletView;
 import es.brasatech.debit_wallet.domain.service.DebtWalletService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,16 @@ public class DebtWalletApiController {
     @PostMapping("/debtor")
     public DebtorView createDebtor(@RequestBody DebtorView debtorView) {
         return debtWalletService.createDebtorView(debtorView.name(), debtorView.email());
+    }
+
+    @PostMapping("/debt")
+    public DebtView createDebt(@RequestBody DebtView debtView) {
+        return debtWalletService.crateDebtView(debtWalletService.getLoggedUseId(), debtView);
+    }
+
+    @PostMapping("/payment")
+    public PaymentView registerPayment(@RequestBody PaymentView paymentView) {
+        return debtWalletService.registerPayment(debtWalletService.getLoggedUseId(), paymentView);
     }
 
 }

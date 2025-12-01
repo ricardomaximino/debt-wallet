@@ -21,6 +21,6 @@ public class DebtorEntity {
     private String email;
     @Column(columnDefinition = "text")
     private String notes;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 }
 

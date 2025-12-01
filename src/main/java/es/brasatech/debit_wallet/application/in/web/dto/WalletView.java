@@ -12,13 +12,6 @@ public record WalletView(
     UUID userId
     ) {
 
-    public WalletView(UUID userId, String name, List<DebtView> debts) {
-        this(UUID.randomUUID(), name, debts, LocalDateTime.now(), userId);
-    }
-    public WalletView (UUID userId, String name) {
-        this(userId, name, List.of());
-    }
-
     public WalletView(WalletView walletView, List<DebtView> debts){
         this(walletView.id(), walletView.name(), debts, walletView.createdAt(), walletView.userId());
     }

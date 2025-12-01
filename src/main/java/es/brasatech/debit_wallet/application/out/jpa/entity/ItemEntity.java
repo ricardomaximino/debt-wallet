@@ -18,9 +18,10 @@ public class ItemEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String name;
-    @Column(columnDefinition = "text") private String description;
+    @Column(columnDefinition = "text")
+    private String description;
     private LocalDate date;
     private String category;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
     private UUID itemId;
 }

@@ -3,11 +3,13 @@ package es.brasatech.debit_wallet.application.out.jpa.mapper;
 import es.brasatech.debit_wallet.application.out.jpa.entity.*;
 import es.brasatech.debit_wallet.domain.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface WalletMapper {
 
+    @Mapping(target = "id", ignore = true)
     DebtEntity mapToDebtEntity(Debt debt);
     Debt mapToDebt(DebtEntity debtEntity);
 

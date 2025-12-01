@@ -78,9 +78,7 @@
                     <div class="mb-3">
                         <label class="form-label">Payment Type</label>
                         <select class="form-select" id="debtPaymentType">
-                            <option value="one-time">One-time</option>
-                            <option value="recurring">Recurring</option>
-                            <option value="installment">Installment</option>
+                            <option th:each="paymentType : ${paymentTypeList}" th:text="${paymentType}"  th:value="${paymentType}" value="one-time">One-time</option>
                         </select>
                     </div>
                 </form>
@@ -113,11 +111,7 @@
                     <div class="mb-3">
                         <label class="form-label">Payment Type</label>
                         <select class="form-select" id="paymentType">
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="bank-transfer">Bank Transfer</option>
-                            <option value="credit-card">Credit Card</option>
-                            <option value="other">Other</option>
+                            <option th:each="paymentType : ${paymentTypeList}" th:text="${paymentType}"  th:value="${paymentType}" value="cash">Cash</option>
                         </select>
                     </div>
                 </form>

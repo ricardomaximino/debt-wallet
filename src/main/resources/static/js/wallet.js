@@ -15,15 +15,11 @@ class Debtor {
 }
 
 class Wallet {
-  constructor(name) {
-    this.id = this.generateId();
+  constructor(id, name, debts, createdAt) {
+    this.id = id;
     this.name = name;
-    this.debts = [];
-    this.createdAt = new Date().toISOString();
-  }
-
-  generateId() {
-    return 'wallet_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    this.debts = debts;
+    this.createdAt = createdAt;
   }
 
   getTotalOwed() {
@@ -32,21 +28,17 @@ class Wallet {
 }
 
 class Debt {
-  constructor(walletId, debtorId, name, description, email, value, paymentType) {
-    this.id = this.generateId();
+  constructor(id, walletId, debtorId, name, description, email, value, paymentType, payments, createdAt) {
+    this.id = id;
     this.walletId = walletId;
-    this.debtorId = debtorId; // Reference to Debtor entity
+    this.debtorId = debtorId;
     this.name = name;
     this.description = description;
     this.email = email;
     this.value = parseFloat(value);
     this.paymentType = paymentType;
-    this.payments = [];
-    this.createdAt = new Date().toISOString();
-  }
-
-  generateId() {
-    return 'debt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    this.payments = payments;
+    this.createdAt = createdAt;
   }
 
   getTotalPaid() {
@@ -63,18 +55,15 @@ class Debt {
 }
 
 class Payment {
-  constructor(debtId, amount, date, type) {
-    this.id = this.generateId();
+  constructor(id, debtId, amount, date, type, createdAt) {
+    this.id = id;
     this.debtId = debtId;
     this.amount = parseFloat(amount);
     this.date = date;
     this.type = type;
-    this.createdAt = new Date().toISOString();
+    this.createdAt = createdAt;
   }
 
-  generateId() {
-    return 'payment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  }
 }
 
 // Application State Manager
@@ -197,14 +186,14 @@ class DebtWalletApp {
 
     // Mock debtor database
     const mockDebtors = [
-      { id: 1, name: 'John', surname: 'Smith', email: 'john.smith@example.com', phone: '+1-555-0101', address: '123 Main St' },
-      { id: 2, name: 'John', surname: 'Doe', email: 'john.doe@company.com', phone: '+1-555-0102', address: '456 Oak Ave' },
-      { id: 3, name: 'Jane', surname: 'Johnson', email: 'jane.j@business.com', phone: '+1-555-0103', address: '789 Pine Rd' },
-      { id: 4, name: 'Michael', surname: 'Williams', email: 'mwilliams@corp.com', phone: '+1-555-0104', address: '321 Elm St' },
-      { id: 5, name: 'Sarah', surname: 'Brown', email: 'sbrown@startup.io', phone: '+1-555-0105', address: '654 Maple Dr' },
-      { id: 6, name: 'David', surname: 'Jones', email: 'djones@tech.com', phone: '+1-555-0106', address: '987 Cedar Ln' },
-      { id: 7, name: 'Emily', surname: 'Davis', email: 'edavis@design.co', phone: '+1-555-0107', address: '147 Birch Way' },
-      { id: 8, name: 'James', surname: 'Miller', email: 'jmiller@agency.com', phone: '+1-555-0108', address: '258 Ash Ct' },
+      { id: crypto.randomUUID(), name: 'John', surname: 'Smith', email: 'john.smith@example.com', phone: '+1-555-0101', address: '123 Main St' },
+      { id: crypto.randomUUID(), name: 'John', surname: 'Doe', email: 'john.doe@company.com', phone: '+1-555-0102', address: '456 Oak Ave' },
+      { id: crypto.randomUUID(), name: 'Jane', surname: 'Johnson', email: 'jane.j@business.com', phone: '+1-555-0103', address: '789 Pine Rd' },
+      { id: crypto.randomUUID(), name: 'Michael', surname: 'Williams', email: 'mwilliams@corp.com', phone: '+1-555-0104', address: '321 Elm St' },
+      { id: crypto.randomUUID(), name: 'Sarah', surname: 'Brown', email: 'sbrown@startup.io', phone: '+1-555-0105', address: '654 Maple Dr' },
+      { id: crypto.randomUUID(), name: 'David', surname: 'Jones', email: 'djones@tech.com', phone: '+1-555-0106', address: '987 Cedar Ln' },
+      { id: crypto.randomUUID(), name: 'Emily', surname: 'Davis', email: 'edavis@design.co', phone: '+1-555-0107', address: '147 Birch Way' },
+      { id: crypto.randomUUID(), name: 'James', surname: 'Miller', email: 'jmiller@agency.com', phone: '+1-555-0108', address: '258 Ash Ct' },
     ];
 
     // Filter based on query (search in name, surname, and email)
@@ -248,6 +237,7 @@ class DebtWalletApp {
     this.selectedDebtor = null;
     document.getElementById('debtorSearch').value = '';
     document.getElementById('debtName').value = '';
+    document.getElementById('debtName').value = '';
     document.getElementById('debtEmail').value = '';
     document.getElementById('selectedDebtorId').value = '';
     document.getElementById('debtorResults').innerHTML = '';
@@ -271,10 +261,6 @@ class DebtWalletApp {
       const data = await response.json();
 
       if (data && Array.isArray(data)) {
-        // Optional: use parsed localStorage if needed
-        const data1 = localStorage.getItem('debtWalletData');
-        const parsed = data1 ? JSON.parse(data1) : null;
-
         this.wallets = data.map(w => Object.assign(new Wallet(), w));
         this.wallets.forEach(wallet => {
           wallet.debts = wallet.debts.map(d => Object.assign(new Debt(), d));
@@ -338,32 +324,32 @@ class DebtWalletApp {
   // CRUD Operations
   async createWallet() {
     const name = document.getElementById('walletName').value;
-    if (!name) return;
-      try {
-        const response = await fetch('http://localhost:8082/api/wallet', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
-        },
-        body: JSON.stringify({ value: name })
-        });
-
-        const data = await response.json();
-        const wallet = new Wallet();
-        wallet.id = data.id;
-        wallet.name = data.name;
-        wallet.createdAt = data.createdAt;
-        this.wallets.push(wallet);
-        await this.loadData();
-        bootstrap.Modal.getInstance(document.getElementById('walletModal')).hide();
-        document.getElementById('walletForm').reset();
-        this.render();
-
-      }
-      catch(error) {
-        console.error('Create wallet failed:', error);
-      }
+    if (!name) {
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:8082/api/wallet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+      },
+      body: JSON.stringify({ value: name })
+      })
+      const data = await response.json();
+      const wallet = new Wallet();
+      wallet.id = data.id;
+      wallet.name = data.name;
+      wallet.createdAt = data.createdAt;
+      this.wallets.push(wallet);
+      await this.loadData();
+      bootstrap.Modal.getInstance(document.getElementById('walletModal')).hide();
+      document.getElementById('walletForm').reset();
+      this.render()
+    }
+    catch(error) {
+      console.error('Create wallet failed:', error);
+    }
   }
 
   async createDebt() {
@@ -398,13 +384,16 @@ class DebtWalletApp {
     }
 
     let debt = new Debt(
+      null,
       this.currentWallet.id,
       debtorId,
       name,
       description,
       email,
       value,
-      paymentType
+      paymentType,
+      [],
+      null
     );
 
     try {
@@ -420,12 +409,15 @@ class DebtWalletApp {
       const data = await response.json();
       debt = new Debt(
         data.id,
-        data.debtor.id,
-        data.debtor.name,
+        data.walletId,
+        data.debtorId,
+        data.name,
         data.description,
-        data.debtor.email,
-        data.value,
-        data.paymentType
+        data.email,
+        parseFloat(data.value),
+        data.paymentType,
+        data.payments,
+        data.createdAt
       );
     } catch(error) {
       console.error('Create debtor failed:', error);
@@ -440,23 +432,35 @@ class DebtWalletApp {
     this.render();
   }
 
-  recordPayment() {
+  async recordPayment() {
     const amount = document.getElementById('paymentAmount').value;
     const date = document.getElementById('paymentDate').value;
     const type = document.getElementById('paymentType').value;
 
     if (!amount || !date) return;
 
-    // Simulate API call
-    console.log('Sending payment to backend:', { debtId: this.currentDebt.id, amount, date, type });
+    try {
+      const response = await fetch('http://localhost:8082/api/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+        },
+        body: JSON.stringify(new Payment(this.currentDebt.id, amount, date, type))
+      });
 
-    const payment = new Payment(this.currentDebt.id, amount, date, type);
-    this.currentDebt.payments.push(payment);
-    this.saveData();
+      const data = await response.json();
 
-    bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
-    document.getElementById('paymentForm').reset();
-    this.render();
+      const payment = new Payment(data.id, data.debtId, data.amount, data.date, data.type);
+      payment.createdAt = data.createdAt;
+      this.currentDebt.payments.push(payment);
+      bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+      document.getElementById('paymentForm').reset();
+      this.render();
+
+    } catch(error) {
+      console.error('Create payment failed:', error);
+    }
   }
 
   // Rendering

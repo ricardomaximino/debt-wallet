@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DebtRepository extends JpaRepository<DebtEntity, UUID> {
-    List<DebtEntity> findByPortfolioId(UUID portfolioId);
+    List<DebtEntity> findByWalletId(UUID walletId);
     List<DebtEntity> findByDebtorId(UUID debtorId);
     List<DebtEntity> findByStatus(DebtStatus status);
     List<DebtEntity> findByUserId(UUID useId);

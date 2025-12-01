@@ -8,9 +8,4 @@ public record Wallet(
     String name,
     LocalDateTime createdAt,
     UUID userId
-) {
-
-    public Wallet(UUID userId, String name) {
-        this(UUID.randomUUID(), name, LocalDateTime.now(), userId);
-    }
-}
+) { }

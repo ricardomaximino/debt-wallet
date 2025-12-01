@@ -2,9 +2,11 @@ package es.brasatech.debit_wallet.application.in.web.mapper;
 
 import es.brasatech.debit_wallet.application.in.web.dto.DebtView;
 import es.brasatech.debit_wallet.application.in.web.dto.DebtorView;
+import es.brasatech.debit_wallet.application.in.web.dto.PaymentView;
 import es.brasatech.debit_wallet.application.in.web.dto.WalletView;
 import es.brasatech.debit_wallet.domain.Debt;
 import es.brasatech.debit_wallet.domain.Debtor;
+import es.brasatech.debit_wallet.domain.Payment;
 import es.brasatech.debit_wallet.domain.Wallet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,4 +30,6 @@ public interface WalletMapperView {
     }
 
     DebtorView mapToDebtorView(Debtor debtor);
+
+    PaymentView mapToPaymentView(Payment payment);
 }

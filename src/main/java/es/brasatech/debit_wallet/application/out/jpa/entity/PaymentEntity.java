@@ -19,8 +19,6 @@ public class PaymentEntity {
     private UUID id;
     private UUID debtId;
     private BigDecimal amount;
-    private LocalDateTime date = LocalDateTime.now();
-    private String method;
-    @Column(columnDefinition = "text")
-    private String note;
+    private String date;
+    private LocalDateTime createdAt;
 }

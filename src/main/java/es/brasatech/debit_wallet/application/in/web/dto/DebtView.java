@@ -7,10 +7,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record DebtView(UUID id, String description, UUID walletId, UUID debtorId, String name, String email, BigDecimal value, PaymentType paymentType, List<PaymentView> payments, LocalDateTime createdAt) {
+public record DebtView(
+    UUID id,
+    String description,
+    UUID walletId,
+    UUID debtorId,
+    String name,
+    String email,
+    BigDecimal value,
+    PaymentType paymentType,
+    List<PaymentView> payments,
+    LocalDateTime createdAt) {
 
-    public DebtView(UUID id, String description, UUID walletId,BigDecimal amount, PaymentType paymentType, List<PaymentView> payments, DebtorView debtor) {
-        this(id, description, walletId, debtor.id(), debtor.name(), debtor.email(), amount, paymentType, payments, LocalDateTime.now());
+    public DebtView(DebtView debtView, List<PaymentView> payments) {
+        this(debtView.id(), debtView.description(), debtView.walletId(), debtView.debtorId(), debtView.name(), debtView.email(), debtView.value(), debtView.paymentType(), payments, debtView.createdAt());
     }
 
     public BigDecimal amount() {
@@ -23,5 +33,12 @@ public record DebtView(UUID id, String description, UUID walletId, UUID debtorId
 
     public BigDecimal outstanding() {
         return value.subtract(paid());
+    }
+
+    public List<PaymentView> payments() {
+        if (payments == null) {
+            return List.of();
+        }
+        return payments;
     }
 }

@@ -1,18 +1,19 @@
 package es.brasatech.debit_wallet.application.out.jpa;
 
 import es.brasatech.debit_wallet.application.in.mapper.WalletMapperResource;
+import es.brasatech.debit_wallet.application.in.web.dto.DebtView;
 import es.brasatech.debit_wallet.application.in.web.dto.DebtorView;
+import es.brasatech.debit_wallet.application.in.web.dto.PaymentView;
 import es.brasatech.debit_wallet.application.in.web.dto.WalletView;
 import es.brasatech.debit_wallet.application.in.web.mapper.WalletMapperView;
 import es.brasatech.debit_wallet.application.out.jpa.mapper.WalletMapper;
 import es.brasatech.debit_wallet.application.out.jpa.repository.*;
-import es.brasatech.debit_wallet.domain.Debtor;
-import es.brasatech.debit_wallet.domain.User;
-import es.brasatech.debit_wallet.domain.Wallet;
+import es.brasatech.debit_wallet.domain.*;
 import es.brasatech.debit_wallet.domain.service.DebtWalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +26,11 @@ public class DebtWalletServiceImpl implements DebtWalletService {
     private final DebtorRepository debtorRepository;
     private final ItemRepository itemRepository;
     private final WalletRepository walletRepository;
-    private final WalletMapper mapper;
-    private final WalletMapperResource mapperResource;
-    private final WalletMapperView mapperView;
+    private final WalletMapper domainMapper;
+    private final WalletMapperResource resourceMapper;
+    private final WalletMapperView viewMapper;
 
-    private final User user = new User(UUID.randomUUID(), "Ricardo", "ricardo@mail.com");
+    private final User user = new User(UUID.fromString("fd4437c0-bda6-489d-964f-7e43169cace0"), "Ricardo", "ricardo@mail.com");
 
     @Override
     public UUID getLoggedUseId() {
@@ -43,25 +44,60 @@ public class DebtWalletServiceImpl implements DebtWalletService {
 
     @Override
     public WalletView createWalletView(UUID userId, String name) {
-        var wallet = new Wallet(userId, name);
-        var walletEntity = walletRepository.save(mapper.mapToWalletEntity(wallet));
-        return mapperView.mapToWalletView(mapper.mapToWallet(walletEntity));
+        var wallet = new Wallet(UUID.randomUUID(), name, LocalDateTime.now(),userId);
+        var walletEntity = walletRepository.save(domainMapper.mapToWalletEntity(wallet));
+        return viewMapper.mapToWalletView(domainMapper.mapToWallet(walletEntity));
     }
 
     @Override
     public DebtorView createDebtorView(String name, String email) {
-        var debtor = new Debtor(name, email);
-        var debtorEntity = debtorRepository.save(mapper.mapToDebtorEntity(debtor));
-        return mapperView.mapToDebtorView(mapper.mapToDebtor(debtorEntity));
+        var debtor = new Debtor(UUID.randomUUID(), name, null, null, email, null, null, LocalDateTime.now());
+        var debtorEntity = debtorRepository.save(domainMapper.mapToDebtorEntity(debtor));
+        return viewMapper.mapToDebtorView(domainMapper.mapToDebtor(debtorEntity));
+    }
+
+    @Override
+    public DebtView crateDebtView(UUID userId, DebtView debtView) {
+        var debt = new Debt(
+            UUID.randomUUID(),
+            debtView.walletId(),
+            debtView.debtorId(),
+            userId,
+            debtView.name(),
+            debtView.email(),
+            debtView.description(),
+            debtView.value(),
+            LocalDateTime.now(),
+            DebtStatus.OPEN,
+            debtView.paymentType(),
+            List.of());
+        var debtEntity = debtRepository.save(domainMapper.mapToDebtEntity(debt));
+        return viewMapper.mapToDebtView(domainMapper.mapToDebt(debtEntity));
+    }
+
+    @Override
+    public PaymentView registerPayment(UUID userId, PaymentView paymentView) {
+        var payment = new Payment(paymentView.id(), paymentView.debitId(), paymentView.amount(), paymentView.date(), paymentView.type(), paymentView.createdAt());
+        var paymentEntity = paymentRepository.save(domainMapper.mapToPaymentEntity(payment));
+        return viewMapper.mapToPaymentView(domainMapper.mapToPayment(paymentEntity));
     }
 
     @Override
     public List<WalletView> getWalletViews(UUID userId) {
-        var debtList = debtRepository.findByUserId(userId).stream().map(mapper::mapToDebt).toList();
-        var walletList = walletRepository.findAllByUserId(userId).stream().map(mapper::mapToWallet).toList();
-        return walletList.stream().map(wallet -> {
+        var debtList = debtRepository.findByUserId(userId).stream().map(domainMapper::mapToDebt).toList();
+        var walletList = walletRepository.findAllByUserId(userId).stream().map(domainMapper::mapToWallet).toList();
+        var list = walletList.stream().map(wallet -> {
             var debts = debtList.stream().filter(debt -> debt.walletId().equals(wallet.id())).toList();
-            return mapperView.mapToWalletView(wallet, debts);
+            return viewMapper.mapToWalletView(wallet, debts);
+        }).toList();
+        return list.stream().map(w -> {
+            var ds = w.debts().stream().map(d -> {
+                var paymentViewList = paymentRepository.findByDebtId(d.id()).stream()
+                    .map(domainMapper::mapToPayment)
+                    .map(viewMapper::mapToPaymentView).toList();
+                return new DebtView(d, paymentViewList);
+            }).toList();
+            return new WalletView(w, ds);
         }).toList();
     }
 }

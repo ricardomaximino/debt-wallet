@@ -16,27 +16,14 @@ public class DebtEntity {
     @Id @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-
-    private UUID userId;
-
-    private UUID portfolioId;
-
+    private UUID walletId;
     private UUID debtorId;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private ItemEntity item;
-
+    private UUID userId;
     private String name;
-
-    private String note;
-
+    private String email;
+    private String description;
     private BigDecimal amount;
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Enumerated(EnumType.STRING)
-    private DebtStatus status = DebtStatus.OPEN;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentType paymentType = PaymentType.FLEXIBLE;
+    private LocalDateTime createdAt;
+    private DebtStatus status;
+    private PaymentType paymentType;
 }

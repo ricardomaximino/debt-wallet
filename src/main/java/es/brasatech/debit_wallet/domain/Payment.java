@@ -6,9 +6,9 @@ import java.util.UUID;
 
 public record Payment (
     UUID id,
-    Debt debt,
+    UUID debitId,
     BigDecimal amount,
-    LocalDateTime date,
-    String method,
-    String note
+    String date,
+    PaymentType type,
+    LocalDateTime createdAt
 ) {}

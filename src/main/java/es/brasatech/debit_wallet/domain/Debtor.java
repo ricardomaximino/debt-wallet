@@ -12,9 +12,5 @@ public record Debtor(
     String notes,
     String address,
     LocalDateTime createdAt
-) {
-    public Debtor(String name, String email) {
-        this(UUID.randomUUID(), name, null,null, email, null, null,LocalDateTime.now());
-    }
-}
+) {}
 
