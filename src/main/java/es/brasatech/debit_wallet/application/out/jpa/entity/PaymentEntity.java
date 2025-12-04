@@ -1,5 +1,6 @@
 package es.brasatech.debit_wallet.application.out.jpa.entity;
 
+import es.brasatech.debit_wallet.domain.PaymentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,5 +21,6 @@ public class PaymentEntity {
     private UUID debtId;
     private BigDecimal amount;
     private String date;
+    private PaymentType type;
     private LocalDateTime createdAt;
 }

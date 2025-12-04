@@ -77,7 +77,7 @@ public class DebtWalletServiceImpl implements DebtWalletService {
 
     @Override
     public PaymentView registerPayment(UUID userId, PaymentView paymentView) {
-        var payment = new Payment(paymentView.id(), paymentView.debitId(), paymentView.amount(), paymentView.date(), paymentView.type(), paymentView.createdAt());
+        var payment = new Payment(UUID.randomUUID(), paymentView.debtId(), paymentView.amount(), paymentView.date(), paymentView.type(), LocalDateTime.now());
         var paymentEntity = paymentRepository.save(domainMapper.mapToPaymentEntity(payment));
         return viewMapper.mapToPaymentView(domainMapper.mapToPayment(paymentEntity));
     }

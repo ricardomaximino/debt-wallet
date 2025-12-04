@@ -260,43 +260,14 @@ class DebtWalletApp {
 
       const data = await response.json();
 
-      if (data && Array.isArray(data)) {
-        this.wallets = data.map(w => Object.assign(new Wallet(), w));
-        this.wallets.forEach(wallet => {
-          wallet.debts = wallet.debts.map(d => Object.assign(new Debt(), d));
-          wallet.debts.forEach(debt => {
-            debt.payments = debt.payments.map(p => Object.assign(new Payment(), p));
-          });
-        });
-      } else {
-        // Initialize with sample data
-        this.initializeSampleData();
-      }
+      this.wallets = data.map(w => Object.assign(new Wallet(), w));
+      this.wallets.forEach(wallet => {
+        wallet.debts = wallet.debts.map(d => Object.assign(new Debt(), d));
+        wallet.debts.forEach(debt => { debt.payments = debt.payments.map(p => Object.assign(new Payment(), p))});
+      });
     } catch (error) {
       console.error("Failed to load data:", error);
-      this.initializeSampleData();
     }
-  }
-
-
-  initializeSampleData() {
-    const wallet1 = new Wallet('Freelance Clients');
-    const debt1 = new Debt(wallet1.id, 1, 'John Smith', 'Website redesign project', 'john.smith@example.com', 5000, 'one-time');
-    const payment1 = new Payment(debt1.id, 2000, '2024-11-15', 'bank-transfer');
-    debt1.payments.push(payment1);
-    wallet1.debts.push(debt1);
-
-    const debt2 = new Debt(wallet1.id, 3, 'Jane Johnson', 'Mobile app development', 'jane.j@business.com', 8000, 'installment');
-    wallet1.debts.push(debt2);
-
-    this.wallets.push(wallet1);
-
-    const wallet2 = new Wallet('Consulting Projects');
-    const debt3 = new Debt(wallet2.id, 5, 'Sarah Brown', 'Marketing consultation', 'sbrown@startup.io', 1500, 'recurring');
-    wallet2.debts.push(debt3);
-
-    this.wallets.push(wallet2);
-    this.saveData();
   }
 
   // Navigation
@@ -446,13 +417,12 @@ class DebtWalletApp {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
         },
-        body: JSON.stringify(new Payment(this.currentDebt.id, amount, date, type))
+        body: JSON.stringify(new Payment(null, this.currentDebt.id, amount, date, type, null))
       });
 
       const data = await response.json();
 
-      const payment = new Payment(data.id, data.debtId, data.amount, data.date, data.type);
-      payment.createdAt = data.createdAt;
+      const payment = new Payment(data.id, data.debtId, data.amount, data.date, data.type, data.createdAt);
       this.currentDebt.payments.push(payment);
       bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
       document.getElementById('paymentForm').reset();
@@ -490,7 +460,7 @@ class DebtWalletApp {
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <p class="text-muted mb-1">Total Amount Owed</p>
-                <h2 class="mb-0">$${totalOwed.toFixed(2)}</h2>
+                <h2 class="mb-0">R$${totalOwed.toFixed(2)}</h2>
               </div>
               <div class="text-primary" style="font-size: 3rem; opacity: 0.2;">
                 <i class="fas fa-dollar-sign"></i>
@@ -534,7 +504,7 @@ class DebtWalletApp {
               <small class="text-muted">${wallet.debts.length} debt(s)</small>
             </div>
             <div class="text-end">
-              <h4 class="mb-0 text-primary">$${wallet.getTotalOwed().toFixed(2)}</h4>
+              <h4 class="mb-0 text-primary">R$${wallet.getTotalOwed().toFixed(2)}</h4>
               <small class="text-muted">owed</small>
             </div>
           </div>
@@ -563,7 +533,7 @@ class DebtWalletApp {
                 <p class="text-muted mb-0">${wallet.debts.length} debt(s)</p>
               </div>
               <div class="text-end">
-                <h2 class="mb-0 text-primary">$${wallet.getTotalOwed().toFixed(2)}</h2>
+                <h2 class="mb-0 text-primary">R$${wallet.getTotalOwed().toFixed(2)}</h2>
                 <small class="text-muted">total owed</small>
               </div>
             </div>
@@ -604,9 +574,9 @@ class DebtWalletApp {
             </div>
             <div class="text-end">
               <h5 class="mb-1 ${debt.isFullyPaid() ? 'text-success' : 'text-danger'}">
-                $${debt.getOutstanding().toFixed(2)}
+                R$${debt.getOutstanding().toFixed(2)}
               </h5>
-              <small class="text-muted">of $${debt.value.toFixed(2)}</small>
+              <small class="text-muted">of R$${debt.value.toFixed(2)}</small>
               <div class="mt-2">
                 <div class="progress" style="height: 6px; width: 100px;">
                   <div class="progress-bar bg-success" style="width: ${(debt.getTotalPaid() / debt.value * 100).toFixed(0)}%"></div>
@@ -661,15 +631,15 @@ class DebtWalletApp {
             <div class="row text-center">
               <div class="col-md-4">
                 <p class="text-muted mb-1">Total Amount</p>
-                <h4 class="mb-0">$${debt.value.toFixed(2)}</h4>
+                <h4 class="mb-0">R$${debt.value.toFixed(2)}</h4>
               </div>
               <div class="col-md-4">
                 <p class="text-muted mb-1">Paid</p>
-                <h4 class="mb-0 text-success">$${debt.getTotalPaid().toFixed(2)}</h4>
+                <h4 class="mb-0 text-success">R$${debt.getTotalPaid().toFixed(2)}</h4>
               </div>
               <div class="col-md-4">
                 <p class="text-muted mb-1">Outstanding</p>
-                <h4 class="mb-0 text-danger">$${debt.getOutstanding().toFixed(2)}</h4>
+                <h4 class="mb-0 text-danger">R$${debt.getOutstanding().toFixed(2)}</h4>
               </div>
             </div>
 
@@ -699,7 +669,7 @@ class DebtWalletApp {
         <div class="payment-item">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <h6 class="mb-1">$${payment.amount.toFixed(2)}</h6>
+              <h6 class="mb-1">R$${payment.amount.toFixed(2)}</h6>
               <small class="text-muted">
                 <i class="fas fa-calendar me-1"></i>${new Date(payment.date).toLocaleDateString()}
                 <i class="fas fa-credit-card ms-3 me-1"></i>${payment.type}
