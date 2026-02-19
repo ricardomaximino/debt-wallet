@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="debt-details">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" onclick="app.showDashboard(); return false;">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#" th:data-id="${wallet.id()}"
+                        onclick="app.showWallet(this.getAttribute('data-id')); return false;"
+                        th:text="${wallet.name()}">Wallet Name</a></li>
+                <li class="breadcrumb-item active" th:text="${debt.name()}">Debt Name</li>
+            </ol>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2">
+                                <span th:text="${debt.name()}">Debt Name</span>
+                                <span th:if="${debt.isFullyPaid()}" class="badge bg-success ms-2">Fully Paid</span>
+                                <span th:unless="${debt.isFullyPaid()}"
+                                    class="badge bg-warning text-dark ms-2">Outstanding</span>
+                            </h3>
+                            <p class="text-muted mb-3"
+                                th:text="${debt.description() != null ? debt.description() : 'No description'}">No
+                                description</p>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <small class="text-muted d-block">Email</small>
+                                    <strong th:text="${debt.email() != null ? debt.email() : 'Not provided'}">Not
+                                        provided</strong>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <small class="text-muted d-block">Payment Type</small>
+                                    <strong th:text="${debt.paymentType()}">Payment Type</strong>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <small class="text-muted d-block">Created</small>
+                                    <strong
+                                        th:text="${#temporals.format(debt.createdAt(), 'dd/MM/yyyy')}">01/01/2023</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Total Amount</p>
+                            <h4 class="mb-0" th:text="'R$' + ${#numbers.formatDecimal(debt.amount(), 1, 2)}">R$0.00</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Paid</p>
+                            <h4 class="mb-0 text-success" th:text="'R$' + ${#numbers.formatDecimal(debt.paid(), 1, 2)}">
+                                R$0.00</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Outstanding</p>
+                            <h4 class="mb-0 text-danger"
+                                th:text="'R$' + ${#numbers.formatDecimal(debt.outstanding(), 1, 2)}">R$0.00</h4>
+                        </div>
+                    </div>
+
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar bg-success" th:style="'width: ' + ${debt.getProgressFactor()} + '%'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Payment History</h4>
+            <button th:if="${!debt.isFullyPaid()}" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#paymentModal"
+                onclick="document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0]">
+                <i class="fas fa-plus me-2"></i>Record Payment
+            </button>
+        </div>
+
+        <div th:if="${debt.payments().isEmpty()}" class="empty-state">
+            <i class="fas fa-money-bill-wave"></i>
+            <h4>No payments yet</h4>
+            <p>Record the first payment to start tracking</p>
+        </div>
+
+        <div th:unless="${debt.payments().isEmpty()}">
+            <div th:each="payment : ${debt.payments()}" class="payment-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1" th:text="'R$' + ${#numbers.formatDecimal(payment.amount(), 1, 2)}">R$0.00</h6>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i><span
+                                th:text="${#temporals.format(payment.date(), 'dd/MM/yyyy')}">01/01/2023</span>
+                            <i class="fas fa-credit-card ms-3 me-1"></i><span th:text="${payment.type()}">Type</span>
+                        </small>
+                    </div>
+                    <div>
+                        <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

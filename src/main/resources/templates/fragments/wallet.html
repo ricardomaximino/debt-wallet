@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="wallet-details">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" onclick="app.showDashboard(); return false;">Dashboard</a></li>
+                <li class="breadcrumb-item active" th:text="${wallet.name()}">Wallet Name</li>
+            </ol>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-1" th:text="${wallet.name()}">Wallet Name</h4>
+                            <p class="text-muted mb-0" th:text="${wallet.debts().size()} + ' debt(s)'">0 debt(s)</p>
+                        </div>
+                        <div class="text-end">
+                            <h2 class="mb-0 text-primary"
+                                th:text="'R$' + ${#numbers.formatDecimal(wallet.totalOwed(), 1, 2)}">R$0.00</h2>
+                            <small class="text-muted">total owed</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Debts</h3>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#debtModal">
+                <i class="fas fa-plus me-2"></i>New Debt
+            </button>
+        </div>
+
+        <div th:if="${wallet.debts().isEmpty()}" class="empty-state">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <h4>No debts in this wallet</h4>
+            <p>Add your first debt to start tracking</p>
+        </div>
+
+        <div th:unless="${wallet.debts().isEmpty()}">
+            <div th:each="debt : ${wallet.debts()}" class="debt-card"
+                th:classappend="${debt.isFullyPaid() ? 'fully-paid' : ''}" th:data-id="${debt.id()}"
+                onclick="app.showDebt(this.getAttribute('data-id'))">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">
+                            <span th:text="${debt.name()}">Debt Name</span>
+                            <span th:if="${debt.isFullyPaid()}" class="badge bg-success ms-2">Paid</span>
+                        </h5>
+                        <p class="text-muted mb-2"
+                            th:text="${debt.description() != null ? debt.description() : 'No description'}">No
+                            description</p>
+                        <div class="d-flex gap-3">
+                            <small class="text-muted">
+                                <i class="fas fa-envelope me-1"></i><span
+                                    th:text="${debt.email() != null ? debt.email() : 'No email'}">No email</span>
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-credit-card me-1"></i><span th:text="${debt.paymentType()}">Payment
+                                    Type</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <h5 class="mb-1" th:classappend="${debt.isFullyPaid() ? 'text-success' : 'text-danger'}"
+                            th:text="'R$' + ${#numbers.formatDecimal(debt.outstanding(), 1, 2)}">
+                            R$0.00
+                        </h5>
+                        <small class="text-muted" th:text="'of R$' + ${#numbers.formatDecimal(debt.amount(), 1, 2)}">of
+                            R$0.00</small>
+                        <div class="mt-2">
+                            <div class="progress" style="height: 6px; width: 100px;">
+                                <div class="progress-bar bg-success"
+                                    th:style="'width: ' + ${debt.getProgressFactor()} + '%'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
