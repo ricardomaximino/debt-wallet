@@ -22,4 +22,12 @@ public interface WalletPersistencePort {
     List<Payment> findPaymentsByDebtId(UUID debtId);
 
     List<Debtor> searchDebtors(String query);
+
+    java.util.Optional<User> findUserByUsername(String username);
+
+    java.util.Optional<Workspace> findWorkspaceBySlug(String slug);
+
+    User saveUser(User user);
+
+    Workspace saveWorkspace(Workspace workspace);
 }

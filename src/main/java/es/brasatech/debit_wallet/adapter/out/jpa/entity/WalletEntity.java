@@ -15,6 +15,10 @@ public class WalletEntity {
     private UUID id;
     private String name;
     private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = false)
+    private WorkspaceEntity workspace;
+
+    @Column(name = "user_id")
     private UUID userId;
 }
-

@@ -6,16 +6,17 @@ import java.util.List;
 import java.util.UUID;
 
 public record Debt(
-                UUID id,
-                UUID walletId,
-                UUID debtorId,
-                UUID userId,
-                String name,
-                String email,
-                String description,
-                BigDecimal amount,
-                LocalDateTime createdAt,
-                DebtStatus status,
-                PaymentType paymentType,
-                List<Item> items) {
+        UUID id,
+        UUID walletId,
+        UUID debtorId,
+        UUID userId,
+        UUID workspaceId,
+        String name,
+        String email,
+        String description,
+        BigDecimal amount,
+        LocalDateTime createdAt,
+        DebtStatus status,
+        PaymentType paymentType,
+        List<Item> items) {
 }

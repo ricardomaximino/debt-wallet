@@ -20,5 +20,8 @@ public class DebtorEntity {
     private String phone;
     private String observation;
     private LocalDateTime createdAt;
-}
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = false)
+    private WorkspaceEntity workspace;
+}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,8 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     private final DebtRepository debtRepository;
     private final DebtorRepository debtorRepository;
     private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final WalletMapper mapper;
 
     @Override
@@ -77,5 +80,25 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
         return debtorRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query).stream()
                 .map(mapper::mapToDebtor)
                 .toList();
+    }
+
+    @Override
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username).map(mapper::mapToUser);
+    }
+
+    @Override
+    public Optional<Workspace> findWorkspaceBySlug(String slug) {
+        return workspaceRepository.findBySlug(slug).map(mapper::mapToWorkspace);
+    }
+
+    @Override
+    public User saveUser(User user) {
+        return mapper.mapToUser(userRepository.save(mapper.mapToUserEntity(user)));
+    }
+
+    @Override
+    public Workspace saveWorkspace(Workspace workspace) {
+        return mapper.mapToWorkspace(workspaceRepository.save(mapper.mapToWorkspaceEntity(workspace)));
     }
 }
