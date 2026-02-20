@@ -12,6 +12,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class WalletViewController {
 
+    @GetMapping("/")
+    public String index() {
+        return "landing";
+    }
+
     @GetMapping("/wallet")
     public String wallet(Model model) {
         model.addAttribute("paymentTypeList", Arrays.asList(PaymentType.values()));

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.title}">Debt Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/wallet.css}">
+</head>
+
+<body class="landing-page">
+
+    <!-- Navigation -->
+    <nav class="landing-nav">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-wallet fa-2x text-primary me-2"></i>
+                <h4 class="mb-0 fw-bold" th:text="#{app.title}">Debt Wallet</h4>
+            </div>
+            <div class="d-none d-md-flex gap-4 align-items-center">
+                <a href="#features" class="text-white text-decoration-none"
+                    th:text="#{landing.nav.features}">Features</a>
+                <a href="#pricing" class="text-white text-decoration-none" th:text="#{landing.nav.pricing}">Pricing</a>
+                <a href="#" class="text-white text-decoration-none" th:text="#{landing.nav.about}">About</a>
+            </div>
+            <div class="d-flex gap-3">
+                <a th:href="@{/login}" class="btn text-white" th:text="#{landing.nav.login}">Login</a>
+                <a th:href="@{/login}" class="btn btn-primary" th:text="#{landing.nav.get_started}">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="landing-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <span class="hero-badge" th:text="#{landing.hero.badge}">TAKE CONTROL TODAY</span>
+                    <h1 class="hero-title">
+                        <span th:text="#{landing.hero.title_part1}">Manage Your Debt,</span><br>
+                        <span class="highlight" th:text="#{landing.hero.title_part2}">Secure Your Future</span>
+                    </h1>
+                    <p class="hero-description" th:text="#{landing.hero.description}">
+                        A simple, secure way to track, manage, and accelerate your journey to financial freedom.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a th:href="@{/login}" class="btn btn-primary btn-lg px-4"
+                            th:text="#{landing.hero.btn.started}">Get Started for Free</a>
+                        <a href="#" class="btn btn-outline-light btn-lg px-4" th:text="#{landing.hero.btn.demo}">View
+                            Demo</a>
+                    </div>
+                    <div class="mt-5 d-flex align-items-center">
+                        <div class="d-flex me-3">
+                            <div class="rounded-circle bg-secondary border border-dark"
+                                style="width: 32px; height: 32px; margin-right: -10px;"></div>
+                            <div class="rounded-circle bg-primary border border-dark"
+                                style="width: 32px; height: 32px; margin-right: -10px;"></div>
+                            <div class="rounded-circle bg-info border border-dark" style="width: 32px; height: 32px;">
+                            </div>
+                        </div>
+                        <small class="text-muted" th:text="#{landing.hero.trusted}">Trusted by 5,000+ debt-free
+                            seekers</small>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-container">
+                        <div class="bg-white rounded-3 p-4 shadow-lg mb-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="h-100 bg-light rounded" style="width: 40%; height: 20px;"></div>
+                                <div class="h-100 bg-primary rounded" style="width: 20%; height: 20px;"></div>
+                            </div>
+                            <div class="d-flex gap-3 align-items-end">
+                                <div class="bg-primary-subtle rounded-top" style="width: 25%; height: 100px;"></div>
+                                <div class="bg-primary rounded-top" style="width: 25%; height: 150px;"></div>
+                                <div class="bg-primary-subtle rounded-top" style="width: 25%; height: 80px;"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-3 p-4 shadow-lg ms-5">
+                            <div class="bg-light rounded mb-2" style="width: 80%; height: 15px;"></div>
+                            <div class="bg-light rounded mb-2" style="width: 60%; height: 15px;"></div>
+                            <div class="bg-primary rounded" style="width: 40%; height: 15px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="feature-section">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-3" th:text="#{landing.features.title}">Simplify Your Finances</h2>
+            <p class="text-muted mx-auto mb-5" style="max-width: 600px;" th:text="#{landing.features.description}">
+                Our MVP provides the essential tools to regain control of your debt.
+            </p>
+            <div class="row g-4 text-start">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h4 class="fw-bold mb-3" th:text="#{landing.feature.tracking.title}">Debt Tracking</h4>
+                        <p class="text-muted mb-0" th:text="#{landing.feature.tracking.desc}">Unified view of all your
+                            balances in one secure location.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                        <h4 class="fw-bold mb-3" th:text="#{landing.feature.alerts.title}">Payment Alerts</h4>
+                        <p class="text-muted mb-0" th:text="#{landing.feature.alerts.desc}">Never miss a due date with
+                            automated notifications.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h4 class="fw-bold mb-3" th:text="#{landing.feature.strategy.title}">Strategy Builder</h4>
+                        <p class="text-muted mb-0" th:text="#{landing.feature.strategy.desc}">Visualize and compare
+                            Snowball vs. Avalanche repayment methods.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section bg-dark-subtle py-5">
+        <div class="container text-center py-5">
+            <h2 class="display-5 fw-bold mb-3" th:text="#{landing.pricing.title}">Pricing Plans</h2>
+            <p class="text-muted mx-auto mb-5" style="max-width: 600px;" th:text="#{landing.pricing.description}">
+                Start for free and upgrade as you scale.
+            </p>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="pricing-card">
+                        <h5 class="fw-bold mb-4" th:text="#{landing.pricing.free.name}">Basic</h5>
+                        <div class="price-value">$<span th:text="#{landing.pricing.free.price}">0</span><small
+                                class="fs-6 fw-normal text-muted">/month</small></div>
+                        <p class="text-muted" th:text="#{landing.pricing.free.desc}">Perfect for individuals starting
+                            their journey.</p>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle"></i> Manual debt tracking</li>
+                            <li><i class="fas fa-check-circle"></i> 1 Linked account</li>
+                            <li><i class="fas fa-check-circle"></i> Basic progress charts</li>
+                        </ul>
+                        <a th:href="@{/login}" class="btn btn-outline-light w-100 p-3 fw-bold"
+                            th:text="#{landing.pricing.free.btn}">Start Free</a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="pricing-card popular">
+                        <span class="popular-badge" th:text="#{landing.pricing.pro.badge}">MOST POPULAR</span>
+                        <h5 class="fw-bold mb-4" th:text="#{landing.pricing.pro.name}">Pro</h5>
+                        <div class="price-value">$<span th:text="#{landing.pricing.pro.price}">9</span><small
+                                class="fs-6 fw-normal text-muted">/month</small></div>
+                        <p class="text-muted" th:text="#{landing.pricing.pro.desc}">Automate your finances and reach
+                            your goals faster.</p>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle"></i> Auto-sync bank accounts</li>
+                            <li><i class="fas fa-check-circle"></i> Unlimited accounts</li>
+                            <li><i class="fas fa-check-circle"></i> Advanced payoff comparison</li>
+                            <li><i class="fas fa-check-circle"></i> Priority chat support</li>
+                        </ul>
+                        <a th:href="@{/login}" class="btn btn-primary w-100 p-3 fw-bold"
+                            th:text="#{landing.pricing.pro.btn}">Go Pro</a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="pricing-card">
+                        <h5 class="fw-bold mb-4" th:text="#{landing.pricing.enterprise.name}">Enterprise</h5>
+                        <div class="price-value" th:text="#{landing.pricing.enterprise.price}">Custom</div>
+                        <p class="text-muted" th:text="#{landing.pricing.enterprise.desc}">Tailored solutions for
+                            financial advisors.</p>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle"></i> Multi-client management</li>
+                            <li><i class="fas fa-check-circle"></i> Full API access</li>
+                            <li><i class="fas fa-check-circle"></i> Custom report branding</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-light w-100 p-3 fw-bold"
+                            th:text="#{landing.pricing.enterprise.btn}">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <div class="container">
+        <div class="cta-banner">
+            <h2 class="display-4 fw-bold mb-4" th:text="#{landing.cta.title}">Ready to be debt-free?</h2>
+            <p class="fs-5 text-white-50 mb-5" th:text="#{landing.cta.description}">Join thousands of users taking
+                control of their financial future today.</p>
+            <a th:href="@{/login}" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary"
+                th:text="#{landing.cta.btn}">Create Your Free Account</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fas fa-wallet fa-2x text-primary me-2"></i>
+                        <h4 class="mb-0 fw-bold" th:text="#{app.title}">Debt Wallet</h4>
+                    </div>
+                    <p class="text-muted w-75" th:text="#{landing.footer.tagline}">Empowering millions to reclaim their
+                        financial independence.</p>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h6 class="fw-bold mb-4 text-white" th:text="#{landing.footer.product}">Product</h6>
+                    <a href="#" class="footer-link" th:text="#{landing.nav.features}">Features</a>
+                    <a href="#" class="footer-link" th:text="#{landing.nav.pricing}">Pricing</a>
+                    <a href="#" class="footer-link" th:text="#{status.loading}">Security</a>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h6 class="fw-bold mb-4 text-white" th:text="#{landing.footer.legal}">Legal</h6>
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                    <a href="#" class="footer-link">Cookie Policy</a>
+                </div>
+            </div>
+            <hr class="my-5 border-secondary opacity-25">
+            <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
+                <p class="text-muted small mb-0" th:text="#{landing.footer.copyright}">© 2024 Debt Wallet. All rights
+                    reserved.</p>
+                <div class="text-muted small" th:text="#{landing.footer.minimalist}">A Minimalist FinTech Product.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
