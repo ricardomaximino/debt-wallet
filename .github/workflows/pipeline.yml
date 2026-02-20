@@ -67,4 +67,4 @@ jobs:
       with:
         service: ${{ secrets.CLOUD_RUN_SERVICE_NAME }}
         region: ${{ secrets.GCP_REGION }}
-        image: ${FULL_GCR_IMAGE}
+        image: ${{ env.FULL_GCR_IMAGE }}
