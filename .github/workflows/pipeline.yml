@@ -33,7 +33,7 @@ jobs:
       run: mvn package
 
     - name: Build the Docker image
-      run: docker build . --tag DOCKERHUB_IMAGE_NAME
+      run: docker build . --tag ${DOCKERHUB_IMAGE_NAME}
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
@@ -41,7 +41,7 @@ jobs:
         username: ${DOCKER_HUB_USERNAME}
         password: ${DOCKERHUB_TOKEN}
     - name: Push image to Docker Hub
-      run: docker push DOCKERHUB_IMAGE_NAME
+      run: docker push ${DOCKERHUB_IMAGE_NAME}
 
     - name: Authenticate to Google Cloud
       uses: 'google-github-actions/auth@v2'
@@ -60,7 +60,7 @@ jobs:
       run: |
         # The full image name for Artifact Registry
         FULL_GCR_IMAGE=${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/${IMAGE_NAME}:latest
-        docker tag DOCKERHUB_IMAGE_NAME $FULL_GCR_IMAGE
+        docker tag ${DOCKERHUB_IMAGE_NAME} $FULL_GCR_IMAGE
         docker push $FULL_GCR_IMAGE
         
         # Make the full image name available for the next step
