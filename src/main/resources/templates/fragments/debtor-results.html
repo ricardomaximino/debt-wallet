@@ -6,22 +6,22 @@
         <!-- Loading State -->
         <div th:if="${loading}" class="debtor-result-item text-center">
             <div class="spinner-border spinner-border-sm text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden" th:text="#{status.loading}">Loading...</span>
             </div>
-            <small class="ms-2">Searching...</small>
+            <small class="ms-2" th:text="#{status.searching}">Searching...</small>
         </div>
 
         <!-- Error State -->
         <div th:if="${error}" class="debtor-result-item text-center text-danger">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            <small th:text="${error}">Error searching debtors</small>
+            <small th:text="#{status.error_search}">Error searching debtors</small>
         </div>
 
         <!-- Empty State -->
         <div th:if="${!loading && (error == null || error.isEmpty()) && (debtors == null || debtors.isEmpty())}"
             class="debtor-result-item text-center text-muted">
             <i class="fas fa-search me-2"></i>
-            <small>No debtors found. Enter details manually.</small>
+            <small th:text="#{status.no_results}">No debtors found. Enter details manually.</small>
         </div>
 
         <!-- Results List -->

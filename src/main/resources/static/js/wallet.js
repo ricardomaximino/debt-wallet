@@ -65,10 +65,10 @@ class DebtWalletApp {
     } catch (error) {
       console.error('Error searching debtors:', error);
       try {
-        const errorResponse = await fetch(`/fragments/debtor-results?error=${encodeURIComponent('Error searching debtors')}`);
+        const errorResponse = await fetch('/fragments/debtor-results?error=true');
         resultsContainer.innerHTML = await errorResponse.text();
       } catch (e) {
-        resultsContainer.innerHTML = '<div class="alert alert-danger">Error searching debtors</div>';
+        resultsContainer.innerHTML = '<div class="alert alert-danger">Error</div>';
       }
     }
   }
@@ -139,10 +139,10 @@ class DebtWalletApp {
     } catch (error) {
       console.error('Failed to load fragment:', error);
       try {
-        const errorResponse = await fetch(`/fragments/error-alert?message=${encodeURIComponent('Error loading content. Please try again.')}`);
+        const errorResponse = await fetch('/fragments/error-alert');
         appContainer.innerHTML = await errorResponse.text();
       } catch (e) {
-        appContainer.innerHTML = '<div class="alert alert-danger">Critical Error</div>';
+        appContainer.innerHTML = '<div class="alert alert-danger">Error</div>';
       }
     }
   }
