@@ -23,7 +23,7 @@ public class WalletServiceImpl implements DebtWalletService {
     private final WalletMapperView viewMapper;
 
     private final User user = new User(UUID.fromString("fd4437c0-bda6-489d-964f-7e43169cace0"), "Ricardo",
-            "ricardo@mail.com", PlanRole.FREE);
+            "ricardo@mail.com", PlanRole.FREE, UserRole.LAWYER);
 
     @Override
     public UUID getLoggedUseId() {

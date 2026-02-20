@@ -18,5 +18,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private PlanRole planRole;
-}
 
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+}

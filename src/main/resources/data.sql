@@ -7,8 +7,8 @@ DELETE FROM wallet;
 DELETE FROM users;
 
 -- User: Ricardo Maximino (Solo Lawyer)
-INSERT INTO users (id, name, email, plan_role) 
-VALUES ('fd4437c0-bda6-489d-964f-7e43169cace0', 'Dr. Ricardo Maximino', 'ricardo@mail.com', 'FREE');
+INSERT INTO users (id, name, email, plan_role, user_role) 
+VALUES ('fd4437c0-bda6-489d-964f-7e43169cace0', 'Dr. Ricardo Maximino', 'ricardo@mail.com', 'FREE', 'LAWYER');
 
 -- Wallets
 INSERT INTO wallet (id, name, created_at, user_id) 
