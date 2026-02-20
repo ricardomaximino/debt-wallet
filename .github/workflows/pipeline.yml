@@ -47,15 +47,15 @@ jobs:
     - name: Set up gcloud CLI
       uses: 'google-github-actions/setup-gcloud@v2'
       with:
-        project_id: ${{ secrets.PROJECT_ID }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
 
     - name: Configure Docker to use Google Artifact Registry
-      run: gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev
+      run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
     - name: Tag and Push Docker Image to Google Artifact Registry
       run: |
         # The full image name for Artifact Registry
-        FULL_GCR_IMAGE=${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/${IMAGE_NAME}:latest
+        FULL_GCR_IMAGE=${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/${IMAGE_NAME}:latest
         docker tag ${DOCKERHUB_IMAGE_NAME} $FULL_GCR_IMAGE
         docker push $FULL_GCR_IMAGE
         
@@ -65,6 +65,6 @@ jobs:
     - name: Deploy to Google Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
-        service: ${{ secrets.CLOUD_RUN_SERVICE }}
-        region: ${{ secrets.REGION }}
+        service: ${{ secrets.CLOUD_RUN_SERVICE_NAME }}
+        region: ${{ secrets.GCP_REGION }}
         image: ${FULL_GCR_IMAGE}
