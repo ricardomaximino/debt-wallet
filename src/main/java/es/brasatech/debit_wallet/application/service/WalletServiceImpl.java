@@ -22,49 +22,52 @@ public class WalletServiceImpl implements DebtWalletService {
     private final WalletPersistencePort persistencePort;
     private final WalletMapperView viewMapper;
 
-    private final User user = new User(
-            UUID.fromString("fd4437c0-bda6-489d-964f-7e43169cace0"),
-            "Ricardo",
-            "ricardo@mail.com",
-            "ricardo",
-            "password",
-            true,
-            PlanRole.FREE,
-            java.util.Set.of(UserRole.LAWYER),
-            java.util.Set.of());
+    private UUID getDefaultWorkspaceId(UUID userId) {
+        return persistencePort.findUserById(userId)
+                .flatMap(user -> user.workspaceIds().stream().findFirst())
+                .orElseThrow(() -> new RuntimeException("User not found or has no workspaces: " + userId));
+    }
 
     @Override
     public UUID getLoggedUseId() {
-        return user.id();
+        // Fallback to the known test user ID until full security integration
+        return UUID.fromString("fd4437c0-bda6-489d-964f-7e43169cace0");
     }
 
     @Override
     public User getUserById(UUID userId) {
-        return user;
+        return persistencePort.findUserById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
     }
 
     @Override
     public WalletView createWalletView(UUID userId, String name) {
-        var wallet = new Wallet(UUID.randomUUID(), name, LocalDateTime.now(), userId, null);
+        var workspaceId = getDefaultWorkspaceId(userId);
+        var wallet = new Wallet(UUID.randomUUID(), name, LocalDateTime.now(), userId, workspaceId);
         var savedWallet = persistencePort.saveWallet(wallet);
         return viewMapper.mapToWalletView(savedWallet);
     }
 
     @Override
     public DebtorView createDebtorView(String name, String email) {
-        var debtor = new Debtor(UUID.randomUUID(), name, null, null, email, null, null, LocalDateTime.now(), null);
+        // Debtor creation also needs a workspace. For now, we use the logged user's
+        // workspace.
+        var workspaceId = getDefaultWorkspaceId(getLoggedUseId());
+        var debtor = new Debtor(UUID.randomUUID(), name, null, null, email, null, null, LocalDateTime.now(),
+                workspaceId);
         var savedDebtor = persistencePort.saveDebtor(debtor);
         return viewMapper.mapToDebtorView(savedDebtor);
     }
 
     @Override
     public DebtView crateDebtView(UUID userId, DebtView debtView) {
+        var workspaceId = getDefaultWorkspaceId(userId);
         var debt = new Debt(
                 UUID.randomUUID(),
                 debtView.walletId(),
                 debtView.debtorId(),
                 userId,
-                null, // workspaceId
+                workspaceId,
                 debtView.name(),
                 debtView.email(),
                 debtView.description(),

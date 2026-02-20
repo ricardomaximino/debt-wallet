@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -85,6 +85,11 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     @Override
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findByUsername(username).map(mapper::mapToUser);
+    }
+
+    @Override
+    public Optional<User> findUserById(UUID userId) {
+        return userRepository.findById(userId).map(mapper::mapToUser);
     }
 
     @Override

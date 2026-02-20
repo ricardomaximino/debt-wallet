@@ -237,7 +237,7 @@ class DebtWalletApp {
         body: JSON.stringify({
           debtId: this.currentDebtId,
           amount: parseFloat(amount),
-          date: date,
+          date: date + 'T00:00:00',
           type: type
         })
       });

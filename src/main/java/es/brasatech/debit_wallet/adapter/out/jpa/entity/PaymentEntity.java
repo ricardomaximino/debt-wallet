@@ -1,6 +1,6 @@
 package es.brasatech.debit_wallet.adapter.out.jpa.entity;
 
-import es.brasatech.debit_wallet.domain.model.*;
+import es.brasatech.debit_wallet.domain.model.PaymentType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,4 +24,3 @@ public class PaymentEntity {
 
     private LocalDateTime createdAt;
 }
-
