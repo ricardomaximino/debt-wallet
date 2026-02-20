@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    container_name: debt-wallet
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=default

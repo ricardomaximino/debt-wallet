@@ -1,0 +1,17 @@
+target/
+.git/
+.DS_Store
+bin/
+.idea/
+.vscode/
+*.iml
+.settings/
+.classpath
+.project
+Dockerfile
+.dockerignore
+HELP.md
+GEMINI.md
+task.md
+implementation_plan.md
+walkthrough.md
