@@ -150,37 +150,45 @@ body {
   margin-bottom: 1rem;
 }
 
-.debtor-results-container {
+.client-results-container {
   background: white;
   border: 1px solid var(--gray-200);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 300px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 250px;
   overflow-y: auto;
+  z-index: 2000;
 }
 
-.debtor-result-item {
-  padding: 1rem;
-  border-bottom: 1px solid var(--gray-200);
+.client-result-item {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--gray-100);
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.debtor-result-item:last-child {
+.client-result-item:last-child {
   border-bottom: none;
 }
 
-.debtor-result-item:hover {
-  background: var(--gray-50);
+.client-result-item:hover {
+  background: #f8fafc;
 }
 
-.debtor-result-item.selected {
+.client-result-item strong {
+  color: var(--gray-800);
+  font-size: 0.95rem;
+  display: block;
+}
+
+.client-result-item small {
+  color: var(--gray-600);
+  font-size: 0.85rem;
+}
+
+.client-result-item.selected {
   background: var(--primary);
   color: white;
-}
-
-.debtor-result-item.selected .text-muted {
-  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .search-spinner {
