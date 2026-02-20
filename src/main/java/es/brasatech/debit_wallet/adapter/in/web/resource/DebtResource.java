@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record DebtResource(
-        UUID id,
-        PortfolioResource portfolio,
-        DebtorResource debtor,
-        ItemResource item,
-        String name,
-        BigDecimal amount,
-        LocalDateTime createdAt,
-        DebtStatus status,
-        PaymentType paymentType,
-        BigDecimal remainingBalance) {
+                UUID id,
+                PortfolioResource portfolio,
+                ClientResource client,
+                ItemResource item,
+                String name,
+                BigDecimal amount,
+                LocalDateTime createdAt,
+                DebtStatus status,
+                PaymentType paymentType,
+                BigDecimal remainingBalance) {
 }

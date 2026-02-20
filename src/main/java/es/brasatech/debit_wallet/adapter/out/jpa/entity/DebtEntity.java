@@ -16,7 +16,7 @@ public class DebtEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private UUID walletId;
-    private UUID debtorId;
+    private UUID clientId;
     private UUID userId;
     private String name;
     private String email;

@@ -16,13 +16,11 @@ public interface WalletPersistencePort {
 
     List<Debt> findDebtsByWalletId(UUID walletId);
 
-    Debtor saveDebtor(Debtor debtor);
-
     Payment savePayment(Payment payment);
 
     List<Payment> findPaymentsByDebtId(UUID debtId);
 
-    List<Debtor> searchDebtors(String query);
+    List<User> searchClients(String query);
 
     java.util.Optional<User> findUserByUsername(String username);
 
@@ -31,6 +29,8 @@ public interface WalletPersistencePort {
     java.util.Optional<Workspace> findWorkspaceBySlug(String slug);
 
     User saveUser(User user);
+
+    boolean existsByUsername(String username);
 
     Workspace saveWorkspace(Workspace workspace);
 }

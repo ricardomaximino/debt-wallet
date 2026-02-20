@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                                         return User.builder()
                                                         .username(user.username())
                                                         .password(user.password())
-                                                        .disabled(!user.active())
+                                                        .disabled(!user.enabled())
                                                         .authorities(user.roles().stream()
                                                                         .map(role -> new SimpleGrantedAuthority(
                                                                                         "ROLE_" + role.name()))

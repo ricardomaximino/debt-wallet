@@ -11,7 +11,7 @@ public record DebtView(
         UUID id,
         String description,
         UUID walletId,
-        UUID debtorId,
+        UUID clientId,
         String name,
         String email,
         BigDecimal amount,
@@ -24,7 +24,7 @@ public record DebtView(
     }
 
     public DebtView(DebtView debtView, List<PaymentView> payments) {
-        this(debtView.id(), debtView.description(), debtView.walletId(), debtView.debtorId(), debtView.name(),
+        this(debtView.id(), debtView.description(), debtView.walletId(), debtView.clientId(), debtView.name(),
                 debtView.email(), debtView.amount(), debtView.paymentType(), payments, debtView.createdAt());
     }
 

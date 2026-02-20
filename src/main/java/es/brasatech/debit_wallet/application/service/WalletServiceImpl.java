@@ -2,7 +2,7 @@ package es.brasatech.debit_wallet.application.service;
 
 import es.brasatech.debit_wallet.adapter.in.web.mapper.WalletMapperView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
-import es.brasatech.debit_wallet.adapter.in.web.resource.DebtorView;
+import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.PaymentView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.application.port_in.DebtWalletService;
@@ -21,6 +21,7 @@ public class WalletServiceImpl implements DebtWalletService {
 
     private final WalletPersistencePort persistencePort;
     private final WalletMapperView viewMapper;
+    private final ClientUsernameGenerator usernameGenerator;
 
     private UUID getDefaultWorkspaceId(UUID userId) {
         return persistencePort.findUserById(userId)
@@ -49,14 +50,24 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public DebtorView createDebtorView(String name, String email) {
-        // Debtor creation also needs a workspace. For now, we use the logged user's
-        // workspace.
+    public ClientView createClientView(String name, String email) {
         var workspaceId = getDefaultWorkspaceId(getLoggedUseId());
-        var debtor = new Debtor(UUID.randomUUID(), name, null, null, email, null, null, LocalDateTime.now(),
-                workspaceId);
-        var savedDebtor = persistencePort.saveDebtor(debtor);
-        return viewMapper.mapToDebtorView(savedDebtor);
+        String username = usernameGenerator.generate(name);
+
+        // A client is a User with role CLIENT
+        var client = new User(
+                UUID.randomUUID(),
+                name,
+                email,
+                username,
+                "{noop}client123", // Default password for new clients
+                true,
+                PlanRole.FREE,
+                java.util.Set.of(UserRole.CLIENT),
+                java.util.Set.of(workspaceId));
+
+        var savedClient = persistencePort.saveUser(client);
+        return viewMapper.mapToClientView(savedClient);
     }
 
     @Override
@@ -65,7 +76,7 @@ public class WalletServiceImpl implements DebtWalletService {
         var debt = new Debt(
                 UUID.randomUUID(),
                 debtView.walletId(),
-                debtView.debtorId(),
+                debtView.clientId(),
                 userId,
                 workspaceId,
                 debtView.name(),
@@ -109,9 +120,9 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public List<DebtorView> searchDebtorViews(String query) {
-        return persistencePort.searchDebtors(query).stream()
-                .map(viewMapper::mapToDebtorView)
+    public List<ClientView> searchClientViews(String query) {
+        return persistencePort.searchClients(query).stream()
+                .map(viewMapper::mapToClientView)
                 .toList();
     }
 }

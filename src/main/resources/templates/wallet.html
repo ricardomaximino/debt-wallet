@@ -78,12 +78,12 @@
                 <div class="modal-body">
                     <form id="debtForm">
                         <div class="mb-3 position-relative">
-                            <label class="form-label" th:text="#{modal.debt.label.search}">Search Debtor</label>
-                            <input type="text" class="form-control" id="debtorSearch"
+                            <label class="form-label" th:text="#{modal.debt.label.search}">Search Client</label>
+                            <input type="text" class="form-control" id="clientSearch"
                                 th:placeholder="#{app.search.placeholder}" placeholder="Type name to search..."
                                 autocomplete="off">
-                            <input type="hidden" id="selectedDebtorId">
-                            <div id="debtorResults" class="position-absolute w-100 mt-1" style="z-index: 1000;"></div>
+                            <input type="hidden" id="selectedClientId">
+                            <div id="clientResults" class="position-absolute w-100 mt-1" style="z-index: 1000;"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" th:text="#{modal.debt.label.client_name}">Client Name</label>

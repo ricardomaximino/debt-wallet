@@ -19,12 +19,6 @@ public interface WalletMapper {
     @Mapping(target = "workspaceId", source = "workspace.id")
     Debt mapToDebt(DebtEntity debtEntity);
 
-    @Mapping(target = "workspace.id", source = "workspaceId")
-    DebtorEntity mapToDebtorEntity(Debtor debtor);
-
-    @Mapping(target = "workspaceId", source = "workspace.id")
-    Debtor mapToDebtor(DebtorEntity debtorEntity);
-
     ItemEntity mapToItemEntity(Item item);
 
     Item mapToItem(ItemEntity itemEntity);

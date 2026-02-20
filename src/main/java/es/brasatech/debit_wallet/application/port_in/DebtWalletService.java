@@ -1,7 +1,7 @@
 package es.brasatech.debit_wallet.application.port_in;
 
 import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
-import es.brasatech.debit_wallet.adapter.in.web.resource.DebtorView;
+import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.PaymentView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.domain.model.User;
@@ -17,7 +17,7 @@ public interface DebtWalletService {
 
     WalletView createWalletView(UUID userId, String name);
 
-    DebtorView createDebtorView(String name, String email);
+    ClientView createClientView(String name, String email);
 
     DebtView crateDebtView(UUID userId, DebtView debtView);
 
@@ -27,5 +27,5 @@ public interface DebtWalletService {
 
     List<WalletView> getWalletViews(UUID userId);
 
-    List<DebtorView> searchDebtorViews(String query);
+    List<ClientView> searchClientViews(String query);
 }

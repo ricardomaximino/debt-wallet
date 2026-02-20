@@ -2,7 +2,7 @@ package es.brasatech.debit_wallet.adapter.in.web.controller;
 
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletNameResource;
 import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
-import es.brasatech.debit_wallet.adapter.in.web.resource.DebtorView;
+import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.PaymentView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.application.port_in.DebtWalletService;
@@ -28,9 +28,9 @@ public class DebtWalletApiController {
         return debtWalletService.createWalletView(debtWalletService.getLoggedUseId(), walletNameResource.name());
     }
 
-    @PostMapping("/debtor")
-    public DebtorView createDebtor(@RequestBody DebtorView debtorView) {
-        return debtWalletService.createDebtorView(debtorView.name(), debtorView.email());
+    @PostMapping("/client")
+    public ClientView createClient(@RequestBody ClientView clientView) {
+        return debtWalletService.createClientView(clientView.name(), clientView.email());
     }
 
     @PostMapping("/debt")
@@ -43,9 +43,9 @@ public class DebtWalletApiController {
         return debtWalletService.registerPayment(debtWalletService.getLoggedUseId(), paymentView);
     }
 
-    @GetMapping("/debtor/search")
-    public List<DebtorView> searchDebtor(@RequestParam String query) {
-        return debtWalletService.searchDebtorViews(query);
+    @GetMapping("/client/search")
+    public List<ClientView> searchClient(@RequestParam String query) {
+        return debtWalletService.searchClientViews(query);
     }
 
 }

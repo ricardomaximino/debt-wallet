@@ -1,5 +1,6 @@
 package es.brasatech.debit_wallet.adapter.in.web.controller;
 
+import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.application.port_in.DebtWalletService;
@@ -68,19 +69,19 @@ public class FragmentViewController {
         return "fragments/debt :: debt-details";
     }
 
-    @GetMapping("/debtor-results")
-    public String getDebtorResults(@RequestParam(required = false) String query,
+    @GetMapping("/client-results")
+    public String getClientResults(@RequestParam(required = false) String query,
             @RequestParam(defaultValue = "false") boolean loading,
             @RequestParam(required = false) String error,
             Model model) {
         if (query != null && !query.trim().isEmpty() && !loading && error == null) {
-            model.addAttribute("debtors", debtWalletService.searchDebtorViews(query));
+            model.addAttribute("clients", debtWalletService.searchClientViews(query));
         } else {
-            model.addAttribute("debtors", List.of());
+            model.addAttribute("clients", List.of());
         }
         model.addAttribute("loading", loading);
         model.addAttribute("error", error);
-        return "fragments/debtor-results :: results";
+        return "fragments/client-results :: results";
     }
 
     @GetMapping("/error-alert")

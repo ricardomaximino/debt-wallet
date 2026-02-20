@@ -25,7 +25,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    private boolean active = true;
+    private boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     private PlanRole planRole;

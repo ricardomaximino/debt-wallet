@@ -17,7 +17,6 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
 
     private final WalletRepository walletRepository;
     private final DebtRepository debtRepository;
-    private final DebtorRepository debtorRepository;
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
@@ -57,12 +56,6 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     }
 
     @Override
-    public Debtor saveDebtor(Debtor debtor) {
-        var entity = mapper.mapToDebtorEntity(debtor);
-        return mapper.mapToDebtor(debtorRepository.save(entity));
-    }
-
-    @Override
     public Payment savePayment(Payment payment) {
         var entity = mapper.mapToPaymentEntity(payment);
         return mapper.mapToPayment(paymentRepository.save(entity));
@@ -76,9 +69,9 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     }
 
     @Override
-    public List<Debtor> searchDebtors(String query) {
-        return debtorRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query).stream()
-                .map(mapper::mapToDebtor)
+    public List<User> searchClients(String query) {
+        return userRepository.searchClients(query).stream()
+                .map(mapper::mapToUser)
                 .toList();
     }
 
@@ -100,6 +93,11 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     @Override
     public User saveUser(User user) {
         return mapper.mapToUser(userRepository.save(mapper.mapToUserEntity(user)));
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override

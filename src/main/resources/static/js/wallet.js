@@ -5,7 +5,7 @@ class DebtWalletApp {
     this.currentWalletId = null;
     this.currentDebtId = null;
     this.searchTimeout = null;
-    this.selectedDebtor = null;
+    this.selectedClient = null;
     this.csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
   }
 
@@ -15,57 +15,57 @@ class DebtWalletApp {
   }
 
   initializeEventListeners() {
-    // Debtor search with debounce
+    // Client search with debounce
     document.addEventListener('input', (e) => {
-      if (e.target.id === 'debtorSearch') {
+      if (e.target.id === 'clientSearch') {
         clearTimeout(this.searchTimeout);
         const query = e.target.value.trim();
 
         if (query.length < 2) {
-          const results = document.getElementById('debtorResults');
+          const results = document.getElementById('clientResults');
           if (results) results.innerHTML = '';
           return;
         }
 
         this.searchTimeout = setTimeout(() => {
-          this.searchDebtors(query);
+          this.searchClients(query);
         }, 300);
       }
     });
 
     // Close search results when clicking outside
     document.addEventListener('click', (e) => {
-      const results = document.getElementById('debtorResults');
-      if (results && !e.target.closest('#debtorSearch') && !e.target.closest('#debtorResults')) {
+      const results = document.getElementById('clientResults');
+      if (results && !e.target.closest('#clientSearch') && !e.target.closest('#clientResults')) {
         results.innerHTML = '';
       }
     });
 
-    // Reset debtor selection when modal closes
+    // Reset client selection when modal closes
     const debtModal = document.getElementById('debtModal');
     if (debtModal) {
       debtModal.addEventListener('hidden.bs.modal', () => {
-        this.resetDebtorSelection();
+        this.resetClientSelection();
       });
     }
   }
 
-  async searchDebtors(query) {
-    const resultsContainer = document.getElementById('debtorResults');
+  async searchClients(query) {
+    const resultsContainer = document.getElementById('clientResults');
     if (!resultsContainer) return;
 
     // Show loading fragment
     try {
-      const loadingResponse = await fetch('/fragments/debtor-results?loading=true');
+      const loadingResponse = await fetch('/fragments/client-results?loading=true');
       resultsContainer.innerHTML = await loadingResponse.text();
 
-      const response = await fetch(`/fragments/debtor-results?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`/fragments/client-results?query=${encodeURIComponent(query)}`);
       const html = await response.text();
       resultsContainer.innerHTML = html;
     } catch (error) {
-      console.error('Error searching debtors:', error);
+      console.error('Error searching clients:', error);
       try {
-        const errorResponse = await fetch('/fragments/debtor-results?error=true');
+        const errorResponse = await fetch('/fragments/client-results?error=true');
         resultsContainer.innerHTML = await errorResponse.text();
       } catch (e) {
         resultsContainer.innerHTML = '<div class="alert alert-danger">Error</div>';
@@ -73,31 +73,31 @@ class DebtWalletApp {
     }
   }
 
-  selectDebtorFragment(element) {
-    const debtor = {
-      id: element.getAttribute('data-debtor-id'),
-      name: element.getAttribute('data-debtor-name'),
-      email: element.getAttribute('data-debtor-email')
+  selectClientFragment(element) {
+    const client = {
+      id: element.getAttribute('data-client-id'),
+      name: element.getAttribute('data-client-name'),
+      email: element.getAttribute('data-client-email')
     };
-    this.selectDebtor(debtor);
+    this.selectClient(client);
   }
 
-  selectDebtor(debtor) {
-    this.selectedDebtor = debtor;
-    document.getElementById('debtName').value = `${debtor.name} ${debtor.surname || ''}`.trim();
-    document.getElementById('debtEmail').value = debtor.email;
-    document.getElementById('selectedDebtorId').value = debtor.id;
-    document.getElementById('debtorSearch').value = `${debtor.name} ${debtor.surname || ''}`.trim();
-    document.getElementById('debtorResults').innerHTML = '';
+  selectClient(client) {
+    this.selectedClient = client;
+    document.getElementById('debtName').value = client.name;
+    document.getElementById('debtEmail').value = client.email;
+    document.getElementById('selectedClientId').value = client.id;
+    document.getElementById('clientSearch').value = client.name;
+    document.getElementById('clientResults').innerHTML = '';
   }
 
-  resetDebtorSelection() {
-    this.selectedDebtor = null;
-    document.getElementById('debtorSearch').value = '';
+  resetClientSelection() {
+    this.selectedClient = null;
+    document.getElementById('clientSearch').value = '';
     document.getElementById('debtName').value = '';
     document.getElementById('debtEmail').value = '';
-    document.getElementById('selectedDebtorId').value = '';
-    document.getElementById('debtorResults').innerHTML = '';
+    document.getElementById('selectedClientId').value = '';
+    document.getElementById('clientResults').innerHTML = '';
   }
 
   // Navigation
@@ -153,7 +153,7 @@ class DebtWalletApp {
     if (!name) return;
 
     try {
-      await fetch('http://localhost:8082/api/wallet', {
+      await fetch('/api/wallet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -176,13 +176,13 @@ class DebtWalletApp {
     const email = document.getElementById('debtEmail').value;
     const value = document.getElementById('debtValue').value;
     const paymentType = document.getElementById('debtPaymentType').value;
-    let debtorId = document.getElementById('selectedDebtorId').value;
+    let clientId = document.getElementById('selectedClientId').value;
 
     if (!name || !value) return;
 
     try {
-      if (!debtorId) {
-        const response = await fetch('http://localhost:8082/api/debtor', {
+      if (!clientId) {
+        const response = await fetch('/api/client', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -191,10 +191,10 @@ class DebtWalletApp {
           body: JSON.stringify({ name: name, email: email })
         });
         const data = await response.json();
-        debtorId = data.id;
+        clientId = data.id;
       }
 
-      await fetch('http://localhost:8082/api/debt', {
+      await fetch('/api/debt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ class DebtWalletApp {
         },
         body: JSON.stringify({
           walletId: this.currentWalletId,
-          debtorId: debtorId,
+          clientId: clientId,
           name: name,
           description: description,
           email: email,
@@ -213,7 +213,7 @@ class DebtWalletApp {
 
       bootstrap.Modal.getInstance(document.getElementById('debtModal')).hide();
       document.getElementById('debtForm').reset();
-      this.resetDebtorSelection();
+      this.resetClientSelection();
       this.render();
     } catch (error) {
       console.error('Create debt failed:', error);
@@ -228,7 +228,7 @@ class DebtWalletApp {
     if (!amount || !date) return;
 
     try {
-      await fetch('http://localhost:8082/api/payment', {
+      await fetch('/api/payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

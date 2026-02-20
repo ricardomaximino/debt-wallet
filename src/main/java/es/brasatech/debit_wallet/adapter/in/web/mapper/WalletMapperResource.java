@@ -12,9 +12,9 @@ public interface WalletMapperResource {
 
     Debt mapToDebt(DebtResource debtResource);
 
-    DebtorResource mapToDebtorResource(Debtor debtor);
+    ClientResource mapToClientResource(User user);
 
-    Debtor mapToDebtor(DebtorResource debtorResource);
+    User mapToClient(ClientResource clientResource);
 
     ItemResource mapToItemResource(Item item);
 
