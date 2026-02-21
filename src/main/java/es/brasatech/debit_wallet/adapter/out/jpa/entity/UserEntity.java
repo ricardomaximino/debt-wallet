@@ -17,6 +17,10 @@ public class UserEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String name;
+    private String firstName;
+    private String middleName;
+    private String surname;
+    private java.time.LocalDate birthday;
     private String email;
 
     @Column(unique = true, nullable = false)
@@ -25,10 +29,16 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    private String profilePicturePath;
+
     private boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     private PlanRole planRole;
+
+    @org.hibernate.annotations.CreationTimestamp
+    @Column(updatable = false)
+    private java.time.LocalDateTime createdAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

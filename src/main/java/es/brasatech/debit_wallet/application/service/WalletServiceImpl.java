@@ -58,13 +58,20 @@ public class WalletServiceImpl implements DebtWalletService {
         var client = new User(
                 UUID.randomUUID(),
                 name,
+                null, // firstName
+                null, // middleName
+                null, // surname
+                null, // birthday
                 email,
                 username,
                 "{noop}client123", // Default password for new clients
+                null, // profilePicturePath
                 true,
                 PlanRole.FREE,
                 java.util.Set.of(UserRole.CLIENT),
-                java.util.Set.of(workspaceId));
+                java.util.Set.of(workspaceId),
+                java.time.LocalDateTime.now() // createdAt
+        );
 
         var savedClient = persistencePort.saveUser(client);
         return viewMapper.mapToClientView(savedClient);

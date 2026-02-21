@@ -121,6 +121,11 @@ class DebtWalletApp {
     this.render();
   }
 
+  showProfile() {
+    this.currentView = 'profile';
+    this.render();
+  }
+
   // Rendering via AJAX Fragments
   async render() {
     const appContainer = document.getElementById('app');
@@ -130,6 +135,8 @@ class DebtWalletApp {
       url = `/fragments/wallet/${this.currentWalletId}`;
     } else if (this.currentView === 'debt') {
       url = `/fragments/debt/${this.currentWalletId}/${this.currentDebtId}`;
+    } else if (this.currentView === 'profile') {
+      url = '/fragments/settings/profile';
     }
 
     try {
@@ -248,6 +255,117 @@ class DebtWalletApp {
     } catch (error) {
       console.error('Create payment failed:', error);
     }
+  }
+
+  // Profile Management
+  async saveProfileChanges() {
+    const firstName = document.getElementById('profileFirstName').value;
+    const middleName = document.getElementById('profileMiddleName').value;
+    const surname = document.getElementById('profileSurname').value;
+    const birthday = document.getElementById('profileBirthday').value;
+    const email = document.getElementById('profileEmail').value;
+
+    const formData = new URLSearchParams();
+    formData.append('firstName', firstName);
+    formData.append('middleName', middleName);
+    formData.append('surname', surname);
+    formData.append('birthday', birthday);
+    formData.append('email', email);
+
+    try {
+      const response = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': this.csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+      });
+      if (response.ok) {
+        alert('Profile updated successfully!');
+        this.showDashboard();
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Update profile failed:', error);
+    }
+  }
+
+  async handleProfilePictureUpload(input) {
+    if (!input.files || !input.files[0]) return;
+
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+
+    try {
+      const response = await fetch('/api/profile/picture', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': this.csrfToken },
+        body: formData
+      });
+      const data = await response.json();
+      document.getElementById('profilePicturePreview').src = `/api/profile/picture-view?path=${encodeURIComponent(data.path)}`;
+    } catch (error) {
+      console.error('Upload picture failed:', error);
+    }
+  }
+
+  async removeProfilePicture() {
+    try {
+      await fetch('/api/profile/picture', {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': this.csrfToken }
+      });
+      document.getElementById('profilePicturePreview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(document.getElementById('profileFirstName').value)}&background=0D6EFD&color=fff`;
+    } catch (error) {
+      console.error('Remove picture failed:', error);
+    }
+  }
+
+  togglePasswordVisibility(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  checkPasswordStrength(password) {
+    const bar = document.getElementById('passwordStrengthBar');
+    const text = document.getElementById('passwordStrengthText');
+    if (!bar || !text) return;
+
+    const requirements = {
+      length: password.length >= 8,
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      case: /[a-z]/.test(password) && /[A-Z]/.test(password)
+    };
+
+    let score = 0;
+    Object.keys(requirements).forEach(req => {
+      const icon = document.getElementById('req' + req.charAt(0).toUpperCase() + req.slice(1));
+      if (icon) {
+        if (requirements[req]) {
+          score++;
+          icon.className = 'bi bi-check-circle-fill me-2 text-success';
+        } else {
+          icon.className = 'bi bi-circle me-2 text-secondary opacity-50';
+        }
+      }
+    });
+
+    const colors = ['bg-danger', 'bg-warning', 'bg-info', 'bg-primary', 'bg-success'];
+    const texts = ['Very Weak', 'Weak', 'Fair', 'Strong', 'Excellent'];
+
+    bar.style.width = (score * 25) + '%';
+    bar.className = 'h-100 transition-all ' + colors[score];
+    text.innerText = 'Password Strength: ' + texts[score];
   }
 }
 

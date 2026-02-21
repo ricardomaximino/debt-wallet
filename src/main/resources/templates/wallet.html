@@ -29,6 +29,10 @@
                             <li><a class="dropdown-item" href="?lang=pt">Português</a></li>
                         </ul>
                     </div>
+                    <button class="btn btn-outline-light btn-sm me-3" onclick="app.showProfile()"
+                        th:title="#{profile.menu.profile_details}">
+                        <i class="fas fa-cog"></i>
+                    </button>
                     <span class="text-light me-3" th:text="${#authentication.name}">Username</span>
                     <form th:action="@{/logout}" method="post" class="mb-0">
                         <button type="submit" class="btn btn-outline-light btn-sm">

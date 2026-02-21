@@ -57,13 +57,20 @@ public class SecurityDataInitializer implements CommandLineRunner {
                         User user = new User(
                                         id,
                                         name,
+                                        null, // firstName
+                                        null, // middleName
+                                        null, // surname
+                                        null, // birthday
                                         email,
                                         username,
                                         passwordEncoder.encode(password),
+                                        null, // profilePicturePath
                                         true,
                                         PlanRole.FREE,
                                         roles,
-                                        workspaceIds);
+                                        workspaceIds,
+                                        java.time.LocalDateTime.now() // createdAt
+                        );
                         persistencePort.saveUser(user);
                         log.info("Created user: {} with roles: {}", username, roles);
                 }
