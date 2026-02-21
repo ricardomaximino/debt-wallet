@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -25,7 +24,17 @@
                 <a href="#pricing" class="text-white text-decoration-none" th:text="#{landing.nav.pricing}">Pricing</a>
                 <a href="#" class="text-white text-decoration-none" th:text="#{landing.nav.about}">About</a>
             </div>
-            <div class="d-flex gap-3">
+            <!-- Authenticated User Info -->
+            <div class="d-flex align-items-center gap-3" sec:authorize="isAuthenticated()">
+                <span class="text-white" th:text="${#authentication.name}">Username</span>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-light btn-sm" th:text="#{app.logout}">Logout</button>
+                </form>
+                <a th:href="@{/wallet}" class="btn btn-primary" th:text="#{landing.nav.dashboard}">Dashboard</a>
+            </div>
+
+            <!-- Guest Links -->
+            <div class="d-flex gap-3" sec:authorize="!isAuthenticated()">
                 <a th:href="@{/login}" class="btn text-white" th:text="#{landing.nav.login}">Login</a>
                 <a th:href="@{/login}" class="btn btn-primary" th:text="#{landing.nav.get_started}">Get Started</a>
             </div>
@@ -46,7 +55,9 @@
                         A simple, secure way to track, manage, and accelerate your journey to financial freedom.
                     </p>
                     <div class="d-flex gap-3">
-                        <a th:href="@{/login}" class="btn btn-primary btn-lg px-4"
+                        <a th:href="@{/wallet}" sec:authorize="isAuthenticated()" class="btn btn-primary btn-lg px-4"
+                            th:text="#{landing.nav.dashboard}">Dashboard</a>
+                        <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="btn btn-primary btn-lg px-4"
                             th:text="#{landing.hero.btn.started}">Get Started for Free</a>
                         <a href="#" class="btn btn-outline-light btn-lg px-4" th:text="#{landing.hero.btn.demo}">View
                             Demo</a>
@@ -191,8 +202,12 @@
             <h2 class="display-4 fw-bold mb-4" th:text="#{landing.cta.title}">Ready to be debt-free?</h2>
             <p class="fs-5 text-white-50 mb-5" th:text="#{landing.cta.description}">Join thousands of users taking
                 control of their financial future today.</p>
-            <a th:href="@{/login}" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary"
-                th:text="#{landing.cta.btn}">Create Your Free Account</a>
+            <a th:href="@{/wallet}" sec:authorize="isAuthenticated()"
+                class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary"
+                th:text="#{landing.nav.dashboard}">Dashboard</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()"
+                class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary" th:text="#{landing.cta.btn}">Create Your
+                Free Account</a>
         </div>
     </div>
 
