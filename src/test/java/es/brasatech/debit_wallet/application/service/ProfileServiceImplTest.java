@@ -1,5 +1,6 @@
 package es.brasatech.debit_wallet.application.service;
 
+import es.brasatech.debit_wallet.application.port_in.WorkspaceUseCase;
 import es.brasatech.debit_wallet.application.port_out.FileStoragePort;
 import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
 import es.brasatech.debit_wallet.domain.model.PlanRole;
@@ -35,6 +36,9 @@ class ProfileServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private WorkspaceUseCase workspaceUseCase;
 
     @InjectMocks
     private ProfileServiceImpl profileService;
@@ -115,6 +119,7 @@ class ProfileServiceImplTest {
     void changePassword_WhenCorrectCurrentPassword_UpdatesPassword() {
         // Given
         when(persistencePort.findUserById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(false);
         when(passwordEncoder.matches("current", "encodedPassword")).thenReturn(true);
         when(passwordEncoder.encode("new")).thenReturn("newEncoded");
 
@@ -130,6 +135,7 @@ class ProfileServiceImplTest {
     void changePassword_WhenWrongCurrentPassword_ThrowsException() {
         // Given
         when(persistencePort.findUserById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(false);
         when(passwordEncoder.matches("wrong", "encodedPassword")).thenReturn(false);
 
         // When & Then

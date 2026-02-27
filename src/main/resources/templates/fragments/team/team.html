@@ -1,0 +1,115 @@
+<div th:fragment="team" class="container-fluid py-4 h-100 overflow-auto">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="stat-card p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1 fw-bold text-dark" th:text="#{team.title}">Team Management</h2>
+                    <p class="text-muted mb-0" th:text="#{team.subtitle}">Manage your workspace collaborators and their
+                        permissions.</p>
+                </div>
+                <button class="btn btn-primary rounded-3 px-4 fw-bold" onclick="app.showAddTeamMemberModal()">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    <span th:text="#{team.btn.add_member}">Add Team Member</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Members by Role -->
+    <div class="row g-4">
+        <div th:each="entry : ${usersByRole}" class="col-12">
+            <h5 class="fw-bold text-dark mb-3 px-2">
+                <span th:text="${entry.key}">Role</span>
+                <span class="badge bg-light text-muted border ms-2" th:text="${entry.value.size()}">0</span>
+            </h5>
+            <div class="row g-3">
+                <div th:each="user : ${entry.value}" class="col-md-6 col-lg-4">
+                    <div class="stat-card p-3 border border-light h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="${user.profilePicturePath != null ? '/api/profile/picture-view?path=' + #uris.escapeQueryParam(user.profilePicturePath) : 'https://ui-avatars.com/api/?name=' + user.name + '&background=0D6EFD&color=fff'}"
+                                class="rounded-circle shadow-sm" style="width: 48px; height: 48px; object-fit: cover;"
+                                alt="Avatar">
+                            <div class="flex-grow-1 overflow-hidden">
+                                <h6 class="mb-0 fw-bold text-dark text-truncate" th:text="${user.name}">User Name</h6>
+                                <p class="small text-muted mb-0 text-truncate" th:text="${user.email}">user@example.com
+                                </p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-0" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li><a class="dropdown-item py-2" href="#" onclick="return false;"><i
+                                                class="bi bi-pencil-square me-2"></i>Edit Role</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item py-2 text-danger" href="#" onclick="return false;"><i
+                                                class="bi bi-person-x-fill me-2"></i>Remove Member</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${usersByRole.isEmpty()}" class="text-center py-5">
+        <div class="feature-icon bg-light text-muted rounded-circle mx-auto mb-3"
+            style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-people-fill fs-1"></i>
+        </div>
+        <h4 th:text="#{team.empty.title}">No Team Members Yet</h4>
+        <p class="text-muted" th:text="#{team.empty.desc}">Start by inviting your colleagues to this workspace.</p>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div class="modal fade" id="addTeamMemberModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" th:text="#{team.modal.add_member.title}">Add Team Member</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <form id="addTeamMemberForm" onsubmit="event.preventDefault(); app.addTeamMember();">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted"
+                                th:text="#{team.modal.add_member.name}">Full Name</label>
+                            <input type="text" id="tmName" class="form-control rounded-3" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted"
+                                th:text="#{team.modal.add_member.email}">Email</label>
+                            <input type="email" id="tmEmail" class="form-control rounded-3" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted"
+                                th:text="#{team.modal.add_member.username}">Username</label>
+                            <input type="text" id="tmUsername" class="form-control rounded-3" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted"
+                                th:text="#{team.modal.add_member.password}">Initial Password</label>
+                            <input type="password" id="tmPassword" class="form-control rounded-3" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted"
+                                th:text="#{team.modal.add_member.role}">Role</label>
+                            <select id="tmRole" class="form-select rounded-3" required>
+                                <option value="LAWYER" th:text="#{role.lawyer}">Lawyer</option>
+                                <option value="CLIENT" th:text="#{role.client}">Client</option>
+                            </select>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary rounded-3 py-2 fw-bold"
+                                th:text="#{team.modal.add_member.btn.save}">Add Member</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

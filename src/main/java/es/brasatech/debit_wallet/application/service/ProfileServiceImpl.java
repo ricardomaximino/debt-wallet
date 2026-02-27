@@ -1,6 +1,7 @@
 package es.brasatech.debit_wallet.application.service;
 
 import es.brasatech.debit_wallet.application.port_in.ProfileUseCase;
+import es.brasatech.debit_wallet.application.port_in.WorkspaceUseCase;
 import es.brasatech.debit_wallet.application.port_out.FileStoragePort;
 import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
 import es.brasatech.debit_wallet.domain.model.User;
@@ -20,6 +21,7 @@ public class ProfileServiceImpl implements ProfileUseCase {
     private final WalletPersistencePort persistencePort;
     private final FileStoragePort fileStoragePort;
     private final PasswordEncoder passwordEncoder;
+    private final WorkspaceUseCase workspaceUseCase;
 
     @Value("${app.profile.upload-dir:uploads/profiles}")
     private String uploadDir;
@@ -84,6 +86,12 @@ public class ProfileServiceImpl implements ProfileUseCase {
                 user.workspaceIds(),
                 user.createdAt());
         persistencePort.saveUser(updatedUser);
+
+        // Automated workspace creation on first password setup
+        if (isDefaultPassword && (user.workspaceIds() == null || user.workspaceIds().isEmpty())) {
+            String workspaceName = user.firstName() + "'s Workspace";
+            workspaceUseCase.createWorkspace(user.id(), workspaceName);
+        }
     }
 
     @Override

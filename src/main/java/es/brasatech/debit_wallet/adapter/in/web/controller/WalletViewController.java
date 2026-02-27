@@ -1,5 +1,7 @@
 package es.brasatech.debit_wallet.adapter.in.web.controller;
 
+import es.brasatech.debit_wallet.application.port_in.DebtWalletService;
+import es.brasatech.debit_wallet.application.port_in.WorkspaceUseCase;
 import es.brasatech.debit_wallet.domain.model.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,8 +15,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class WalletViewController {
 
-    private final es.brasatech.debit_wallet.application.port_in.DebtWalletService debtWalletService;
-    private final es.brasatech.debit_wallet.application.port_in.WorkspaceUseCase workspaceUseCase;
+    private final DebtWalletService debtWalletService;
+    private final WorkspaceUseCase workspaceUseCase;
 
     @GetMapping("/")
     public String index(org.springframework.ui.Model model) {

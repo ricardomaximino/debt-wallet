@@ -29,6 +29,22 @@
                 </div>
             </div>
 
+            <!-- Team Management Card -->
+            <div class="col-md-4">
+                <div class="feature-card h-100" onclick="app.showTeam()">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3"
+                            style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <h4 th:text="#{feature.team.title}">Team Management</h4>
+                        <p class="text-muted small" th:text="#{feature.team.desc}">Manage your team members and roles in
+                            this workspace.</p>
+                        <button class="btn btn-outline-success btn-sm mt-2" th:text="#{btn.open}">Open</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Future features can be added here -->
             <div class="col-md-4 opacity-50">
                 <div class="feature-card h-100 border-dashed">

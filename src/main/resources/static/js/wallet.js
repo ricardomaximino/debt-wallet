@@ -182,6 +182,8 @@ class DebtWalletApp {
       url = `/fragments/${this.workspaceSlug}/debt/${this.currentWalletId}/${this.currentDebtId}`;
     } else if (this.currentView === 'profile') {
       url = '/fragments/settings/profile';
+    } else if (this.currentView === 'team') {
+      url = `/fragments/w/${this.workspaceSlug}/team`;
     }
 
     try {
@@ -196,6 +198,97 @@ class DebtWalletApp {
       } catch (e) {
         appContainer.innerHTML = '<div class="alert alert-danger">Error</div>';
       }
+    }
+  }
+
+  // Workspace & Team Management
+  showTeam() {
+    this.currentView = 'team';
+    this.render();
+  }
+
+  showCreateWorkspaceModal() {
+    const name = prompt("Enter the name for the new workspace:");
+    if (name && name.trim()) {
+      this.createWorkspace(name.trim());
+    }
+  }
+
+  async createWorkspace(name) {
+    try {
+      const formData = new URLSearchParams();
+      formData.append('name', name);
+
+      const response = await fetch('/fragments/settings/workspaces', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': this.csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        this.showToast('Workspace created successfully!', 'success');
+        // Refresh profile if we are there
+        if (this.currentView === 'profile') {
+          location.reload(); // Simplest way to refresh all workspace contexts
+        }
+      } else {
+        this.showToast('Failed to create workspace', 'danger');
+      }
+    } catch (error) {
+      console.error('Create workspace failed:', error);
+    }
+  }
+
+  showAddTeamMemberModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addTeamMemberModal'));
+    modal.show();
+  }
+
+  async addTeamMember() {
+    const name = document.getElementById('tmName').value;
+    const email = document.getElementById('tmEmail').value;
+    const username = document.getElementById('tmUsername').value;
+    const password = document.getElementById('tmPassword').value;
+    const role = document.getElementById('tmRole').value;
+
+    const formData = new URLSearchParams();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('role', role);
+
+    try {
+      const response = await fetch(`/fragments/w/${this.workspaceSlug}/team/add`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': this.csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const html = await response.text();
+        const modalElement = document.getElementById('addTeamMemberModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+
+        // Wait for modal to be hidden before updating DOM to avoid backdrop issues
+        setTimeout(() => {
+          document.getElementById('app').innerHTML = html;
+          this.showToast('Team member added successfully!', 'success');
+        }, 300);
+      } else {
+        this.showToast('Failed to add team member', 'danger');
+      }
+    } catch (error) {
+      console.error('Add team member failed:', error);
     }
   }
 

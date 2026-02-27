@@ -1,6 +1,6 @@
 package es.brasatech.debit_wallet.adapter.out.jpa.service;
 
-import es.brasatech.debit_wallet.adapter.out.jpa.entity.*;
+import es.brasatech.debit_wallet.adapter.out.jpa.entity.WorkspaceEntity;
 import es.brasatech.debit_wallet.adapter.out.jpa.mapper.WalletMapper;
 import es.brasatech.debit_wallet.adapter.out.jpa.repository.*;
 import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
@@ -147,5 +147,15 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
                     user.getWorkspaces().remove(workspace);
                     userRepository.save(user);
                 });
+    }
+
+    @Override
+    public List<User> findUsersByWorkspaceId(UUID workspaceId) {
+        WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new RuntimeException("Workspace not found: " + workspaceId));
+        return userRepository.findAll().stream()
+                .filter(user -> user.getWorkspaces().contains(workspace))
+                .map(mapper::mapToUser)
+                .toList();
     }
 }

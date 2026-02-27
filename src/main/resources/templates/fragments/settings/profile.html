@@ -234,6 +234,23 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Add New Workspace Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="stat-card h-100 cursor-pointer hover-shadow border-dashed"
+                                onclick="app.showCreateWorkspaceModal()">
+                                <div class="card-body p-4 text-center">
+                                    <div class="feature-icon bg-secondary text-white rounded-circle mx-auto mb-3"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1 text-dark" th:text="#{profile.workspace.add_new}">Add New
+                                        Workspace</h6>
+                                    <p class="small text-muted mb-0" th:text="#{profile.workspace.add_desc}">Create a
+                                        new workspace for your team</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -43,4 +43,6 @@ public interface WalletPersistencePort {
     List<Workspace> findWorkspacesByUserId(UUID userId);
 
     void removeWorkspaceFromUsers(UUID workspaceId);
+
+    List<User> findUsersByWorkspaceId(UUID workspaceId);
 }

@@ -1,8 +1,8 @@
 package es.brasatech.debit_wallet.application.service;
 
 import es.brasatech.debit_wallet.adapter.in.web.mapper.WalletMapperView;
-import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView;
+import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.PaymentView;
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.application.port_in.DebtWalletService;

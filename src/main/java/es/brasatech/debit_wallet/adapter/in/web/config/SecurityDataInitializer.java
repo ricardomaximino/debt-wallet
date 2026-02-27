@@ -1,7 +1,10 @@
 package es.brasatech.debit_wallet.adapter.in.web.config;
 
 import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
-import es.brasatech.debit_wallet.domain.model.*;
+import es.brasatech.debit_wallet.domain.model.PlanRole;
+import es.brasatech.debit_wallet.domain.model.User;
+import es.brasatech.debit_wallet.domain.model.UserRole;
+import es.brasatech.debit_wallet.domain.model.Workspace;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

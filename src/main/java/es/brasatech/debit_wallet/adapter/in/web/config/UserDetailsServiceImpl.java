@@ -4,7 +4,6 @@ import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 return persistencePort.findUserByUsername(username)
                                 .map(user -> {
                                         log.info("User found: {}, roles: {}", username, user.roles());
-                                        return User.builder()
+                                        return org.springframework.security.core.userdetails.User.builder()
                                                         .username(user.username())
                                                         .password(user.password())
                                                         .disabled(!user.enabled())

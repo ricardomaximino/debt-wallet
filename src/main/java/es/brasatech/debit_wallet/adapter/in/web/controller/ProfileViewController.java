@@ -6,8 +6,7 @@ import es.brasatech.debit_wallet.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -28,5 +27,12 @@ public class ProfileViewController {
         model.addAttribute("user", user);
         model.addAttribute("workspaces", workspaces);
         return "fragments/settings/profile :: profile";
+    }
+
+    @PostMapping("/workspaces")
+    @ResponseBody
+    public void createWorkspace(@RequestParam String name) {
+        UUID userId = debtWalletService.getLoggedUseId();
+        workspaceUseCase.createWorkspace(userId, name);
     }
 }

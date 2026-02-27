@@ -1,9 +1,9 @@
 package es.brasatech.debit_wallet.adapter.in.web.controller;
 
 import es.brasatech.debit_wallet.adapter.in.web.resource.DebtView;
-// import es.brasatech.debit_wallet.adapter.in.web.resource.ClientView; // Removed unused
 import es.brasatech.debit_wallet.adapter.in.web.resource.WalletView;
 import es.brasatech.debit_wallet.application.port_in.DebtWalletService;
+import es.brasatech.debit_wallet.domain.model.Workspace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +25,7 @@ public class FragmentViewController {
 
     private UUID getWorkspaceId(String slug) {
         return workspaceUseCase.getWorkspaceBySlug(slug)
-                .map(es.brasatech.debit_wallet.domain.model.Workspace::id)
+                .map(Workspace::id)
                 .orElseThrow(() -> new RuntimeException("Workspace not found: " + slug));
     }
 
