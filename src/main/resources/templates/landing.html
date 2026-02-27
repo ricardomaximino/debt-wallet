@@ -28,11 +28,10 @@
             </div>
             <!-- Authenticated User Info -->
             <div class="d-flex align-items-center gap-3" sec:authorize="isAuthenticated()">
-                <span class="text-white" th:text="${#authentication.name}">Username</span>
-                <form th:action="@{/logout}" method="post" class="m-0">
-                    <button type="submit" class="btn btn-outline-light btn-sm" th:text="#{app.logout}">Logout</button>
-                </form>
-                <a th:href="@{/wallet}" class="btn btn-primary" th:text="#{landing.nav.dashboard}">Dashboard</a>
+                <a th:href="@{/settings/profile}" class="text-white text-decoration-none fw-bold">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${#authentication.name}">Username</span>
+                </a>
             </div>
 
             <!-- Guest Links -->

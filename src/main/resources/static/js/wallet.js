@@ -7,13 +7,36 @@ class DebtWalletApp {
     this.searchTimeout = null;
     this.selectedClient = null;
     this.csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-    this.workspaceSlug = document.querySelector('meta[name="workspace-slug"]')?.content;
-    this.workspaceId = document.querySelector('meta[name="workspace-id"]')?.content;
+    this.workspaceSlug = document.querySelector('meta[name="workspace-slug"]')?.content || '';
+    this.workspaceId = document.querySelector('meta[name="workspace-id"]')?.content || '';
   }
 
   async init() {
+    // Sync state before initial render
+    if (window.location.pathname.includes('/settings/profile')) {
+      this.currentView = 'profile';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('setup')) {
+      this.currentView = 'profile';
+    } else if (urlParams.has('profile')) {
+      this.currentView = 'profile';
+    }
+
     this.render();
     this.initializeEventListeners();
+
+    // Secondary UI adjustments after render
+    if (urlParams.has('setup')) {
+      setTimeout(() => {
+        this.showProfileTab('security');
+        const currentPassField = document.getElementById('currentPassword');
+        if (currentPassField) {
+          currentPassField.closest('.col-12').classList.add('d-none');
+        }
+      }, 500);
+    }
   }
 
   initializeEventListeners() {
@@ -130,7 +153,7 @@ class DebtWalletApp {
     this.render();
   }
 
-  showProfile() {
+  showProfileSettings() {
     this.currentView = 'profile';
     this.render();
   }
@@ -138,6 +161,17 @@ class DebtWalletApp {
   // Rendering via AJAX Fragments
   async render() {
     const appContainer = document.getElementById('app');
+
+    // Skip remote rendering if we are on a static page already rendered by SSR
+    if (window.location.pathname.includes('/settings/profile')) {
+      return;
+    }
+
+    if (!this.workspaceSlug && this.currentView !== 'profile') {
+      console.warn('Skipping render: No workspace context');
+      return;
+    }
+
     let url = `/fragments/${this.workspaceSlug}/home`;
 
     if (this.currentView === 'dashboard') {
@@ -350,6 +384,17 @@ class DebtWalletApp {
     }
   }
 
+  showProfileTab(tabId) {
+    // Hide all tabs
+    document.querySelectorAll('.profile-section-tab').forEach(el => el.classList.add('d-none'));
+    // Show selected tab
+    document.getElementById('profileSection' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.remove('d-none');
+
+    // Update menu active state
+    document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('menu' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+  }
+
   checkPasswordStrength(password) {
     const bar = document.getElementById('passwordStrengthBar');
     const text = document.getElementById('passwordStrengthText');
@@ -381,6 +426,96 @@ class DebtWalletApp {
     bar.style.width = (score * 25) + '%';
     bar.className = 'h-100 transition-all ' + colors[score];
     text.innerText = 'Password Strength: ' + texts[score];
+  }
+
+  async saveProfileChanges() {
+    const activeTab = document.querySelector('.profile-section-tab:not(.d-none)').id;
+
+    if (activeTab === 'profileSectionProfile') {
+      await this.updatePersonalDetails();
+    } else if (activeTab === 'profileSectionSecurity') {
+      await this.updatePassword();
+    }
+  }
+
+  async updatePersonalDetails() {
+    const firstName = document.getElementById('profileFirstName').value;
+    const middleName = document.getElementById('profileMiddleName').value;
+    const surname = document.getElementById('profileSurname').value;
+    const birthday = document.getElementById('profileBirthday').value || null;
+    const email = document.getElementById('profileEmail').value;
+
+    const formData = new URLSearchParams();
+    formData.append('firstName', firstName);
+    formData.append('middleName', middleName);
+    formData.append('surname', surname);
+    if (birthday) formData.append('birthday', birthday);
+    formData.append('email', email);
+
+    try {
+      const response = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': this.csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+      });
+      if (response.ok) {
+        this.showToast('Profile updated successfully!', 'success');
+        this.render(); // Reload to update navbar etc if needed
+      } else {
+        this.showToast('Failed to update profile', 'danger');
+      }
+    } catch (error) {
+      console.error('Update profile failed:', error);
+    }
+  }
+
+  async updatePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!newPassword) {
+      this.showToast('New password is required', 'warning');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      this.showToast('Passwords do not match', 'danger');
+      return;
+    }
+
+    const formData = new URLSearchParams();
+    formData.append('currentPassword', currentPassword);
+    formData.append('newPassword', newPassword);
+
+    try {
+      const response = await fetch('/api/profile/password', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': this.csrfToken,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+      });
+      if (response.ok) {
+        this.showToast('Password changed successfully!', 'success');
+        document.getElementById('passwordChangeForm').reset();
+        this.checkPasswordStrength('');
+      } else {
+        const error = await response.text();
+        this.showToast('Failed: ' + error, 'danger');
+      }
+    } catch (error) {
+      console.error('Password change failed:', error);
+    }
+  }
+
+  showToast(message, type = 'info') {
+    // Basic alert for now, can be improved to a toast
+    alert(message);
   }
 }
 

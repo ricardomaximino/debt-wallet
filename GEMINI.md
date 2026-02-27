@@ -66,16 +66,38 @@ The application is designed to be a SaaS for lawyers, scaling from solo practiti
   - `LAWYER`: Manages their own workspace and can be invited to others.
   - `CLIENT`: Restricted access to view and optionally edit specific debt data.
 
-### 2. Multi-Workspace
+### 2. Multi-Workspace Isolation
 
-- A user (Lawyer) can belong to multiple workspaces.
-- Access control must be fine-grained: a lawyer from "Firm A" might be invited to collaborate on a specific project in "Firm B" with limited permissions.
-- **Security Check**: Always verify `user_id` or `workspace_id` ownership when accessing resources in adapters or services.
+The application enforces strict isolation between workspaces. A user can belong to multiple workspaces, but data (Wallets, Debts, etc.) is always scoped to a specific `workspace_id`.
 
-## 🛠️ Tech Stack
+- **Routing Pattern**: Workspace-specific features use the slug in the URL: `/w/{slug}/[feature]`.
+- **Backend Context**:
+  - **Controllers**: Use `workspaceSlug` as a `@PathVariable` to resolve the current workspace.
+  - **API Requests**: Expect the `X-Workspace-Id` header (UUID) for any data-modifying or sensitive operations.
+  - **Services**: All business logic methods MUST accept a `workspaceId` parameter. Methods relying on "default" workspaces are forbidden.
+- **Frontend Context**:
+  - `wallet.html` provides context via meta tags: `<meta name="workspace-slug">` and `<meta name="workspace-id">`.
+  - `wallet.js` uses these tags to initialize the application state.
+
+## 🛠️ Tech Stack & Patterns
 
 - **Backend**: Spring Boot 4.0.3+, Java 25.
-- **Build**: Maven.
-- **Persistence**: H2 (Dev), JPA/Hibernate.
-- **Mapping**: MapStruct for domain-to-entity and domain-to-view conversions.
-- **Safety**: Use records with compact constructors for null-safe collections.
+- **Mapping (MapStruct)**:
+  - Always use `componentModel = "spring"` in `@Mapper` annotations.
+  - Ensure `WritingPolicy.IGNORE` or explicit mapping for all workspace/user relationships.
+- **CSRF Security**:
+  - Every AJAX `POST/PUT/DELETE` must include the `X-CSRF-TOKEN` header.
+  - Use the meta tags `<meta name="_csrf">` and `<meta name="_csrf_header">` defined in `landing.html` or `wallet.html`.
+- **Internationalization (i18n)**:
+  - Resource: `src/main/resources/i18n/messages*.properties`.
+  - Pattern: Use `#{key}` in Thymeleaf and `[[#{key}]]` for script inlining.
+
+## 🏗️ Development Checklist for New Features
+
+1. **Domain**: Add `workspaceId` to the domain record.
+2. **Persistence**: Ensure the JPA entity has a `WorkspaceEntity` relationship and the Repository filters by `workspaceId`.
+3. **Service**: Pass `workspaceId` from the Port to the Service and down to the Persistence Adapter.
+4. **Adapter In (Web)**:
+   - Fragment routes: `/fragments/w/{workspaceSlug}/[feature]`.
+   - API routes: Verify `X-Workspace-Id` header.
+5. **Frontend**: Update `wallet.js` to handle the new fragment loading within the workspace context.

@@ -56,8 +56,16 @@ public class ProfileServiceImpl implements ProfileUseCase {
     @Override
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
         User user = getProfile(userId);
-        if (!passwordEncoder.matches(currentPassword, user.password())) {
-            throw new RuntimeException("Invalid current password");
+
+        boolean isDefaultPassword = passwordEncoder.matches("password", user.password());
+
+        if (currentPassword != null && !currentPassword.isEmpty()) {
+            if (!passwordEncoder.matches(currentPassword, user.password())) {
+                throw new RuntimeException("Invalid current password");
+            }
+        } else if (!isDefaultPassword) {
+            // If it's not the default password, current password is required
+            throw new RuntimeException("Current password is required to change to a new one");
         }
         User updatedUser = new User(
                 user.id(),

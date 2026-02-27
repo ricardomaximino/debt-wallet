@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
         private final UserDetailsService userDetailsService;
+        private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -31,7 +32,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/", "/css/**", "/js/**", "/webjars/**").permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
-                                                .defaultSuccessUrl("/wallet", true)
+                                                .successHandler(customAuthenticationSuccessHandler)
                                                 .permitAll())
                                 .logout(logout -> logout.permitAll())
                                 .csrf(csrf -> csrf

@@ -35,7 +35,7 @@ public class ProfileApiController {
 
     @PostMapping("/password")
     public ResponseEntity<Void> changePassword(
-            @RequestParam String currentPassword,
+            @RequestParam(required = false) String currentPassword,
             @RequestParam String newPassword) {
         UUID userId = debtWalletService.getLoggedUseId();
         profileUseCase.changePassword(userId, currentPassword, newPassword);

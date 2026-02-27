@@ -27,6 +27,12 @@ INSERT INTO users (id, name, email, username, password, enabled, plan_role)
 VALUES ('77777777-7777-7777-7777-777777777777', 'Maria Silva', 'maria@email.com', 'maria', '{noop}password', true, 'PROFESSIONAL');
 INSERT INTO user_roles (user_id, role) VALUES ('77777777-7777-7777-7777-777777777777', 'LAWYER');
 
+-- New User (Needs Password Setup)
+INSERT INTO users (id, name, email, username, password, enabled, plan_role) 
+VALUES ('12345678-1234-1234-1234-1234567890ab', 'New User', 'new@email.com', 'newuser', '{noop}password', true, 'FREE');
+INSERT INTO user_roles (user_id, role) VALUES ('12345678-1234-1234-1234-1234567890ab', 'LAWYER');
+INSERT INTO user_workspace (user_id, workspace_id) VALUES ('12345678-1234-1234-1234-1234567890ab', '33333333-3333-3333-3333-333333333333');
+
 -- Assignments
 -- Ricardo has his private workspace and the firm one
 INSERT INTO user_workspace (user_id, workspace_id) VALUES ('fd4437c0-bda6-489d-964f-7e43169cace0', '11111111-1111-1111-1111-111111111111');
