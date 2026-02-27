@@ -22,6 +22,9 @@ public class WorkspaceEntity {
     @Column(unique = true, nullable = false)
     private String slug;
 
+    @Column(name = "owner_id")
+    private UUID ownerId;
+
     @ManyToMany(mappedBy = "workspaces")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

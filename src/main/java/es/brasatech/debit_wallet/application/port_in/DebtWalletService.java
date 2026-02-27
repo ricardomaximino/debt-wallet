@@ -15,17 +15,17 @@ public interface DebtWalletService {
 
     User getUserById(UUID userId);
 
-    WalletView createWalletView(UUID userId, String name);
+    WalletView createWalletView(UUID userId, UUID workspaceId, String name);
 
-    ClientView createClientView(String name, String email);
+    ClientView createClientView(UUID workspaceId, String name, String email);
 
-    DebtView crateDebtView(UUID userId, DebtView debtView);
+    DebtView crateDebtView(UUID userId, UUID workspaceId, DebtView debtView);
 
-    PaymentView registerPayment(UUID userId, PaymentView paymentView);
+    PaymentView registerPayment(UUID userId, UUID workspaceId, PaymentView paymentView);
 
     // view
 
-    List<WalletView> getWalletViews(UUID userId);
+    List<WalletView> getWalletViews(UUID userId, UUID workspaceId);
 
-    List<ClientView> searchClientViews(String query);
+    List<ClientView> searchClientViews(UUID workspaceId, String query);
 }

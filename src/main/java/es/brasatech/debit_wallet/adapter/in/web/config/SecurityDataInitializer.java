@@ -48,7 +48,7 @@ public class SecurityDataInitializer implements CommandLineRunner {
 
         private Workspace createWorkspace(UUID id, String name, String slug) {
                 return persistencePort.findWorkspaceBySlug(slug)
-                                .orElseGet(() -> persistencePort.saveWorkspace(new Workspace(id, name, slug)));
+                                .orElseGet(() -> persistencePort.saveWorkspace(new Workspace(id, name, slug, null)));
         }
 
         private void createUser(UUID id, String username, String name, String email, String password,

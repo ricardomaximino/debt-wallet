@@ -10,11 +10,15 @@ public interface WalletPersistencePort {
 
     List<Wallet> findAllWalletsByUserId(UUID userId);
 
+    List<Wallet> findAllWalletsByWorkspaceId(UUID workspaceId);
+
     Debt saveDebt(Debt debt);
 
     List<Debt> findDebtsByUserId(UUID userId);
 
     List<Debt> findDebtsByWalletId(UUID walletId);
+
+    List<Debt> findDebtsByWorkspaceId(UUID workspaceId);
 
     Payment savePayment(Payment payment);
 
@@ -33,4 +37,10 @@ public interface WalletPersistencePort {
     boolean existsByUsername(String username);
 
     Workspace saveWorkspace(Workspace workspace);
+
+    void deleteWorkspace(UUID workspaceId);
+
+    List<Workspace> findWorkspacesByUserId(UUID userId);
+
+    void removeWorkspaceFromUsers(UUID workspaceId);
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -19,33 +20,38 @@ public class DebtWalletApiController {
     private final DebtWalletService debtWalletService;
 
     @GetMapping("/wallet")
-    public List<WalletView> getWallet() {
-        return debtWalletService.getWalletViews(debtWalletService.getLoggedUseId());
+    public List<WalletView> getWallet(@RequestHeader("X-Workspace-Id") UUID workspaceId) {
+        return debtWalletService.getWalletViews(debtWalletService.getLoggedUseId(), workspaceId);
     }
 
     @PostMapping("/wallet")
-    public WalletView createWallet(@RequestBody WalletNameResource walletNameResource) {
-        return debtWalletService.createWalletView(debtWalletService.getLoggedUseId(), walletNameResource.name());
+    public WalletView createWallet(@RequestHeader("X-Workspace-Id") UUID workspaceId,
+            @RequestBody WalletNameResource walletNameResource) {
+        return debtWalletService.createWalletView(debtWalletService.getLoggedUseId(), workspaceId,
+                walletNameResource.name());
     }
 
     @PostMapping("/client")
-    public ClientView createClient(@RequestBody ClientView clientView) {
-        return debtWalletService.createClientView(clientView.name(), clientView.email());
+    public ClientView createClient(@RequestHeader("X-Workspace-Id") UUID workspaceId,
+            @RequestBody ClientView clientView) {
+        return debtWalletService.createClientView(workspaceId, clientView.name(), clientView.email());
     }
 
     @PostMapping("/debt")
-    public DebtView createDebt(@RequestBody DebtView debtView) {
-        return debtWalletService.crateDebtView(debtWalletService.getLoggedUseId(), debtView);
+    public DebtView createDebt(@RequestHeader("X-Workspace-Id") UUID workspaceId, @RequestBody DebtView debtView) {
+        return debtWalletService.crateDebtView(debtWalletService.getLoggedUseId(), workspaceId, debtView);
     }
 
     @PostMapping("/payment")
-    public PaymentView registerPayment(@RequestBody PaymentView paymentView) {
-        return debtWalletService.registerPayment(debtWalletService.getLoggedUseId(), paymentView);
+    public PaymentView registerPayment(@RequestHeader("X-Workspace-Id") UUID workspaceId,
+            @RequestBody PaymentView paymentView) {
+        return debtWalletService.registerPayment(debtWalletService.getLoggedUseId(), workspaceId, paymentView);
     }
 
     @GetMapping("/client/search")
-    public List<ClientView> searchClient(@RequestParam String query) {
-        return debtWalletService.searchClientViews(query);
+    public List<ClientView> searchClient(@RequestHeader("X-Workspace-Id") UUID workspaceId,
+            @RequestParam String query) {
+        return debtWalletService.searchClientViews(workspaceId, query);
     }
 
 }

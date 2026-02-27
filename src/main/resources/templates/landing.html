@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/wallet.css}">
+    <meta name="_csrf" th:content="${_csrf?.token}" />
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}" />
 </head>
 
 <body class="landing-page">
@@ -99,6 +101,30 @@
             </div>
         </div>
     </header>
+
+    <!-- Workspace Selection (Logged In Only) -->
+    <section th:if="${workspaces != null and !workspaces.isEmpty()}" class="workspace-section bg-dark py-5">
+        <div class="container text-center">
+            <h2 class="display-6 fw-bold mb-4 text-white" th:text="#{landing.workspaces.title}">Select Your Workspace
+            </h2>
+            <div class="row g-4 justify-content-center">
+                <div th:each="workspace : ${workspaces}" class="col-md-4 col-lg-3">
+                    <div class="card bg-secondary text-white border-0 shadow-sm h-100">
+                        <div class="card-body d-flex flex-column align-items-center p-4">
+                            <div class="rounded-circle bg-primary mb-3 d-flex align-items-center justify-content-center"
+                                style="width: 60px; height: 60px;">
+                                <i class="fas fa-briefcase fa-lg"></i>
+                            </div>
+                            <h5 class="card-title fw-bold" th:text="${workspace.name()}">Workspace Name</h5>
+                            <p class="small text-white-50 mb-4" th:text="${workspace.slug()}">slug</p>
+                            <a th:href="@{/w/{slug}(slug=${workspace.slug()})}" class="btn btn-primary mt-auto w-100"
+                                th:text="#{landing.workspaces.select}">Go to Workspace</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Features Section -->
     <section id="features" class="feature-section">
@@ -284,7 +310,7 @@
             const email = document.getElementById('subEmail').value;
             const alert = document.getElementById('subAlert');
             const btn = document.getElementById('btnSubscribe');
-            const csrfToken = /*[[${_csrf.token}]]*/ '';
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content || /*[[${_csrf?.token}]]*/ '';
 
             if (!email) return;
 

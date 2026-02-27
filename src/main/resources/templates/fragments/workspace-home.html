@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="workspace-home">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h2 class="mb-0" th:text="#{workspace.welcome}">Welcome to your Workspace</h2>
+                    <p class="text-muted" th:text="#{workspace.select_feature}">Select a feature to get started</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Debit Wallet Card -->
+            <div class="col-md-4">
+                <div class="feature-card h-100" onclick="app.showDashboard()">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3"
+                            style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-wallet fa-2x"></i>
+                        </div>
+                        <h4 th:text="#{feature.debit_wallet.title}">Debit Wallet</h4>
+                        <p class="text-muted small" th:text="#{feature.debit_wallet.desc}">Manage debts, wallets and
+                            payments for your clients.</p>
+                        <button class="btn btn-outline-primary btn-sm mt-2" th:text="#{btn.open}">Open</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future features can be added here -->
+            <div class="col-md-4 opacity-50">
+                <div class="feature-card h-100 border-dashed">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-secondary text-white rounded-circle mx-auto mb-3"
+                            style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-plus fa-2x"></i>
+                        </div>
+                        <h4 th:text="#{feature.coming_soon}">Coming Soon</h4>
+                        <p class="text-muted small" th:text="#{feature.more_tools}">More legal tools are being
+                            developed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

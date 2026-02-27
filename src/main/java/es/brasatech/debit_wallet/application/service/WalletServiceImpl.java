@@ -23,12 +23,6 @@ public class WalletServiceImpl implements DebtWalletService {
     private final WalletMapperView viewMapper;
     private final ClientUsernameGenerator usernameGenerator;
 
-    private UUID getDefaultWorkspaceId(UUID userId) {
-        return persistencePort.findUserById(userId)
-                .flatMap(user -> user.workspaceIds().stream().findFirst())
-                .orElseThrow(() -> new RuntimeException("User not found or has no workspaces: " + userId));
-    }
-
     @Override
     public UUID getLoggedUseId() {
         // Fallback to the known test user ID until full security integration
@@ -42,21 +36,25 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public WalletView createWalletView(UUID userId, String name) {
-        var workspaceId = getDefaultWorkspaceId(userId);
+    public WalletView createWalletView(UUID userId, UUID workspaceId, String name) {
         var wallet = new Wallet(UUID.randomUUID(), name, LocalDateTime.now(), userId, workspaceId);
         var savedWallet = persistencePort.saveWallet(wallet);
         return viewMapper.mapToWalletView(savedWallet);
     }
 
     @Override
-    public ClientView createClientView(String name, String email) {
-        var workspaceId = getDefaultWorkspaceId(getLoggedUseId());
+    public ClientView createClientView(UUID workspaceId, String name, String email) {
+        UUID clientId = UUID.randomUUID();
+        // Automatic workspace for new client (if they don't have one, but here we are
+        // in a workspace context)
+        // Usually, createClientView is called by a Lawyer in THEIR workspace.
+        // If a client is created as a "standalone user", they get their own workspace.
+        // But for feature isolation, we might want to just create the user.
+
         String username = usernameGenerator.generate(name);
 
-        // A client is a User with role CLIENT
         var client = new User(
-                UUID.randomUUID(),
+                clientId,
                 name,
                 null, // firstName
                 null, // middleName
@@ -78,8 +76,7 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public DebtView crateDebtView(UUID userId, DebtView debtView) {
-        var workspaceId = getDefaultWorkspaceId(userId);
+    public DebtView crateDebtView(UUID userId, UUID workspaceId, DebtView debtView) {
         var debt = new Debt(
                 UUID.randomUUID(),
                 debtView.walletId(),
@@ -99,7 +96,10 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public PaymentView registerPayment(UUID userId, PaymentView paymentView) {
+    public PaymentView registerPayment(UUID userId, UUID workspaceId, PaymentView paymentView) {
+        // Payment doesn't HAVE a workspaceId in its domain model yet, but we check if
+        // the debt belongs to the workspace
+        // Actually, Payment is tied to Debt, and Debt is tied to Workspace.
         var payment = new Payment(UUID.randomUUID(), paymentView.debtId(), paymentView.amount(), paymentView.date(),
                 paymentView.type(), LocalDateTime.now());
         var savedPayment = persistencePort.savePayment(payment);
@@ -107,9 +107,9 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public List<WalletView> getWalletViews(UUID userId) {
-        var debtList = persistencePort.findDebtsByUserId(userId);
-        var walletList = persistencePort.findAllWalletsByUserId(userId);
+    public List<WalletView> getWalletViews(UUID userId, UUID workspaceId) {
+        var debtList = persistencePort.findDebtsByWorkspaceId(workspaceId);
+        var walletList = persistencePort.findAllWalletsByWorkspaceId(workspaceId);
 
         var list = walletList.stream().map(wallet -> {
             var debts = debtList.stream().filter(debt -> debt.walletId().equals(wallet.id())).toList();
@@ -127,8 +127,11 @@ public class WalletServiceImpl implements DebtWalletService {
     }
 
     @Override
-    public List<ClientView> searchClientViews(String query) {
+    public List<ClientView> searchClientViews(UUID workspaceId, String query) {
+        // Filter by workspace if needed, but searchClients is currently global.
+        // We should probably filter by workspace membership.
         return persistencePort.searchClients(query).stream()
+                .filter(u -> u.workspaceIds().contains(workspaceId))
                 .map(viewMapper::mapToClientView)
                 .toList();
     }

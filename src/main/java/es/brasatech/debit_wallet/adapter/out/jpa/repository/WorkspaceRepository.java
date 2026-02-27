@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface WorkspaceRepository extends JpaRepository<WorkspaceEntity, UUID> {
     Optional<WorkspaceEntity> findBySlug(String slug);
+
+    void deleteByOwnerId(UUID ownerId);
 }

@@ -1,5 +1,6 @@
 package es.brasatech.debit_wallet.adapter.out.jpa.service;
 
+import es.brasatech.debit_wallet.adapter.out.jpa.entity.*;
 import es.brasatech.debit_wallet.adapter.out.jpa.mapper.WalletMapper;
 import es.brasatech.debit_wallet.adapter.out.jpa.repository.*;
 import es.brasatech.debit_wallet.application.port_out.WalletPersistencePort;
@@ -36,6 +37,14 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     }
 
     @Override
+    public List<Wallet> findAllWalletsByWorkspaceId(UUID workspaceId) {
+        return walletRepository.findAll().stream()
+                .filter(w -> workspaceId.equals(w.getWorkspace().getId()))
+                .map(mapper::mapToWallet)
+                .toList();
+    }
+
+    @Override
     public Debt saveDebt(Debt debt) {
         var entity = mapper.mapToDebtEntity(debt);
         return mapper.mapToDebt(debtRepository.save(entity));
@@ -51,6 +60,14 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     @Override
     public List<Debt> findDebtsByWalletId(UUID walletId) {
         return debtRepository.findByWalletId(walletId).stream()
+                .map(mapper::mapToDebt)
+                .toList();
+    }
+
+    @Override
+    public List<Debt> findDebtsByWorkspaceId(UUID workspaceId) {
+        return debtRepository.findAll().stream()
+                .filter(d -> workspaceId.equals(d.getWorkspace().getId()))
                 .map(mapper::mapToDebt)
                 .toList();
     }
@@ -103,5 +120,32 @@ public class WalletPersistenceAdapter implements WalletPersistencePort {
     @Override
     public Workspace saveWorkspace(Workspace workspace) {
         return mapper.mapToWorkspace(workspaceRepository.save(mapper.mapToWorkspaceEntity(workspace)));
+    }
+
+    @Override
+    public void deleteWorkspace(UUID workspaceId) {
+        workspaceRepository.deleteById(workspaceId);
+    }
+
+    @Override
+    public List<Workspace> findWorkspacesByUserId(UUID userId) {
+        return userRepository.findById(userId)
+                .map(user -> user.getWorkspaces().stream()
+                        .map(mapper::mapToWorkspace)
+                        .toList())
+                .orElse(List.of());
+    }
+
+    @Override
+    public void removeWorkspaceFromUsers(UUID workspaceId) {
+        WorkspaceEntity workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new RuntimeException("Workspace not found: " + workspaceId));
+
+        userRepository.findAll().stream()
+                .filter(user -> user.getWorkspaces().contains(workspace))
+                .forEach(user -> {
+                    user.getWorkspaces().remove(workspace);
+                    userRepository.save(user);
+                });
     }
 }

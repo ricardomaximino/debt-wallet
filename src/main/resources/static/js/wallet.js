@@ -1,12 +1,14 @@
 // Application State Manager
 class DebtWalletApp {
   constructor() {
-    this.currentView = 'dashboard';
+    this.currentView = 'workspace-home';
     this.currentWalletId = null;
     this.currentDebtId = null;
     this.searchTimeout = null;
     this.selectedClient = null;
     this.csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+    this.workspaceSlug = document.querySelector('meta[name="workspace-slug"]')?.content;
+    this.workspaceId = document.querySelector('meta[name="workspace-id"]')?.content;
   }
 
   async init() {
@@ -56,16 +58,16 @@ class DebtWalletApp {
 
     // Show loading fragment
     try {
-      const loadingResponse = await fetch('/fragments/client-results?loading=true');
+      const loadingResponse = await fetch(`/fragments/${this.workspaceSlug}/client-results?loading=true`);
       resultsContainer.innerHTML = await loadingResponse.text();
 
-      const response = await fetch(`/fragments/client-results?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`/fragments/${this.workspaceSlug}/client-results?query=${encodeURIComponent(query)}`);
       const html = await response.text();
       resultsContainer.innerHTML = html;
     } catch (error) {
       console.error('Error searching clients:', error);
       try {
-        const errorResponse = await fetch('/fragments/client-results?error=true');
+        const errorResponse = await fetch('/fragments/error-alert');
         resultsContainer.innerHTML = await errorResponse.text();
       } catch (e) {
         resultsContainer.innerHTML = '<div class="alert alert-danger">Error</div>';
@@ -108,6 +110,13 @@ class DebtWalletApp {
     this.render();
   }
 
+  showWorkspaceHome() {
+    this.currentView = 'workspace-home';
+    this.currentWalletId = null;
+    this.currentDebtId = null;
+    this.render();
+  }
+
   showWallet(walletId) {
     this.currentView = 'wallet';
     this.currentWalletId = walletId;
@@ -129,12 +138,14 @@ class DebtWalletApp {
   // Rendering via AJAX Fragments
   async render() {
     const appContainer = document.getElementById('app');
-    let url = '/fragments/dashboard';
+    let url = `/fragments/${this.workspaceSlug}/home`;
 
-    if (this.currentView === 'wallet') {
-      url = `/fragments/wallet/${this.currentWalletId}`;
+    if (this.currentView === 'dashboard') {
+      url = `/fragments/${this.workspaceSlug}/dashboard`;
+    } else if (this.currentView === 'wallet') {
+      url = `/fragments/${this.workspaceSlug}/wallet/${this.currentWalletId}`;
     } else if (this.currentView === 'debt') {
-      url = `/fragments/debt/${this.currentWalletId}/${this.currentDebtId}`;
+      url = `/fragments/${this.workspaceSlug}/debt/${this.currentWalletId}/${this.currentDebtId}`;
     } else if (this.currentView === 'profile') {
       url = '/fragments/settings/profile';
     }
@@ -164,7 +175,8 @@ class DebtWalletApp {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': this.csrfToken
+          'X-CSRF-TOKEN': this.csrfToken,
+          'X-Workspace-Id': this.workspaceId
         },
         body: JSON.stringify({ name: name })
       });
@@ -193,7 +205,8 @@ class DebtWalletApp {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': this.csrfToken
+            'X-CSRF-TOKEN': this.csrfToken,
+            'X-Workspace-Id': this.workspaceId
           },
           body: JSON.stringify({ name: name, email: email })
         });
@@ -205,7 +218,8 @@ class DebtWalletApp {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': this.csrfToken
+          'X-CSRF-TOKEN': this.csrfToken,
+          'X-Workspace-Id': this.workspaceId
         },
         body: JSON.stringify({
           walletId: this.currentWalletId,
@@ -239,7 +253,8 @@ class DebtWalletApp {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': this.csrfToken
+          'X-CSRF-TOKEN': this.csrfToken,
+          'X-Workspace-Id': this.workspaceId
         },
         body: JSON.stringify({
           debtId: this.currentDebtId,
